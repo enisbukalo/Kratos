@@ -34,14 +34,16 @@ def test_update_bone(client: TestClient, generate_bones: list[schemas.Bone]):
     for _ in range(len(generate_bones)):
         random_bone = random.choice(generate_bones)
         updated_name = "".join(random.choices(string.ascii_uppercase + string.digits, k=50))
-        updated_height = round(random.uniform(200.0, 400.0), 4)
+        updated_length = round(random.uniform(200.0, 400.0), 4)
 
-        response = client.put(f"Bone/{random_bone.id}", json={"name": updated_name, "height_m": updated_height})
+        response = client.put(
+            f"Bone/{random_bone.id}", json={"name": updated_name, "length_cm": updated_length, "skeleton_id": random_bone.skeleton_id}
+        )
         assert response.status_code == 200
         updated_bone = schemas.Bone(**response.json())
         assert updated_bone.id == random_bone.id
         assert updated_bone.name == updated_name
-        assert updated_bone.length_cm == updated_height
+        assert updated_bone.length_cm == updated_length
 
         response = client.get(f"Bone/{random_bone.id}")
         assert response.status_code == 200

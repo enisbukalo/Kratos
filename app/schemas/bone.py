@@ -16,7 +16,7 @@ class Bone(BoneBase):
 
 
 class CreateBone(BaseModel):
-    name: str = Field(default="Bone Name", min_length=4, max_length=100)
+    name: str = Field(default="Bone Name", min_length=4, max_length=256)
     length_cm: float = Field(default=65.89, gt=0)
     skeleton_id: int
 

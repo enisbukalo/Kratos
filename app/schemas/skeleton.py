@@ -7,7 +7,6 @@ class SkeletonBase(BaseModel):
     id: int
     name: str
     height_m: float
-    bones: "list[Bone]"
 
 
 class Skeleton(SkeletonBase):
