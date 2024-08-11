@@ -19,22 +19,22 @@ async def get_bones(query_params: Annotated[schemas.BonesQuery, Depends(schemas.
 
 @router.get("/{id}", response_model=schemas.Bone)
 async def get_bone(id: int = Path(gt=0), db: Session = Depends(get_db)):
-    Bone = db.query(models.Bone).filter(models.Bone.id == id).first()
-    if Bone is None:
+    bone = db.query(models.Bone).filter(models.Bone.id == id).first()
+    if bone is None:
         raise HTTPException(status_code=404, detail=f"No Bone With Id {id} Exists.")
 
-    return Bone
+    return bone
 
 
 @router.post("", response_model=schemas.Bone)
 async def create_bone(bone_to_create: schemas.CreateBone, db: Session = Depends(get_db)):
-    created_Bone = models.Bone(**bone_to_create.model_dump())
+    created_bone = models.Bone(**bone_to_create.model_dump())
 
-    db.add(created_Bone)
+    db.add(created_bone)
     db.commit()
-    db.refresh(created_Bone)
+    db.refresh(created_bone)
 
-    return schemas.Bone.model_validate(created_Bone)
+    return schemas.Bone.model_validate(created_bone)
 
 
 @router.delete("/{id}")
@@ -46,13 +46,13 @@ async def delete_bone(id: int = Path(gt=0), db: Session = Depends(get_db)):
 @router.put("/{id}", response_model=schemas.Bone)
 async def update_bone(bone_updates: schemas.CreateBone, id: int = Path(gt=0), db: Session = Depends(get_db)):
     query = db.query(models.Bone).filter(models.Bone.id == id)
-    Bone_to_update = query.first()
+    bone_to_update = query.first()
 
-    if Bone_to_update is None:
+    if bone_to_update is None:
         raise HTTPException(status_code=404, detail=f"No Bone With Id {id} Exists.")
 
     query.update(bone_updates.model_dump(), synchronize_session=False)
     db.commit()
-    db.refresh(Bone_to_update)
+    db.refresh(bone_to_update)
 
-    return Bone_to_update
+    return bone_to_update
