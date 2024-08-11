@@ -3,8 +3,8 @@ name: Test & Build
 on: [push]
 
 env:
-  DOCKER_IMAGE_NAME: Kratos_Image
-  DOCKER_CONTAINER_NAME: Kratos_Container
+  DOCKER_IMAGE_NAME: kratos_image
+  DOCKER_CONTAINER_NAME: kratos_container
 
 jobs:
   test-python:
