@@ -3,7 +3,6 @@ from pydantic import BaseModel, ConfigDict, Field
 from app.database import Base, engine
 
 from .query_params import GetQueryParams
-from .workouts import Workout
 
 Base.metadata.create_all(bind=engine)
 
@@ -37,6 +36,6 @@ class UserQuery(GetQueryParams):
     pass
 
 
-from .bone import Bone
+from .workouts import Workout
 
-Bone.model_rebuild()
+Workout.model_rebuild()

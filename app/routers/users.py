@@ -4,19 +4,21 @@ from fastapi import APIRouter, Depends, Path, HTTPException
 from sqlalchemy.orm import Session
 
 from app import models, schemas
-from app.database import get_db
+from app.database import get_db, engine
+
+models.BASE.metadata.create_all(bind=engine)
 
 router = APIRouter(prefix="/User", tags=["User"])
 
 
-@router.get("", response_model=list[schemas.User])
+@router.get("", response_model=list[schemas.UserReply])
 async def get_users(query_params: Annotated[schemas.UserQuery, Depends(schemas.UserQuery)], db: Session = Depends(get_db)):
     query = db.query(models.User)
 
     return query.limit(query_params.page_size).offset((query_params.page_number * query_params.page_size) if query_params.page_number > 1 else 0).all()
 
 
-@router.get("/{id}", response_model=schemas.User)
+@router.get("/{id}", response_model=schemas.UserReply)
 async def get_user(id: int = Path(gt=0), db: Session = Depends(get_db)):
     user = db.query(models.User).filter(models.User.id == id).first()
     if user is None:
@@ -25,7 +27,7 @@ async def get_user(id: int = Path(gt=0), db: Session = Depends(get_db)):
     return user
 
 
-@router.post("", response_model=schemas.User)
+@router.post("", response_model=schemas.UserReply)
 async def create_user(model_to_create: schemas.CreateUser, db: Session = Depends(get_db)):
     created_model = models.User(**model_to_create.model_dump())
 
@@ -33,7 +35,7 @@ async def create_user(model_to_create: schemas.CreateUser, db: Session = Depends
     db.commit()
     db.refresh(created_model)
 
-    return schemas.User.model_validate(created_model)
+    return created_model
 
 
 @router.delete("/{id}")

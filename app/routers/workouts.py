@@ -4,19 +4,21 @@ from fastapi import APIRouter, Depends, Path, HTTPException
 from sqlalchemy.orm import Session
 
 from app import models, schemas
-from app.database import get_db
+from app.database import get_db, engine
+
+models.BASE.metadata.create_all(bind=engine)
 
 router = APIRouter(prefix="/Workout", tags=["Workout"])
 
 
-@router.get("", response_model=list[schemas.Workout])
+@router.get("", response_model=list[schemas.WorkoutReply])
 async def get_workouts(query_params: Annotated[schemas.WorkoutQuery, Depends(schemas.WorkoutQuery)], db: Session = Depends(get_db)):
     query = db.query(models.Workout)
 
     return query.limit(query_params.page_size).offset((query_params.page_number * query_params.page_size) if query_params.page_number > 1 else 0).all()
 
 
-@router.get("/{id}", response_model=schemas.Workout)
+@router.get("/{id}", response_model=schemas.WorkoutReply)
 async def get_workout(id: int = Path(gt=0), db: Session = Depends(get_db)):
     workout = db.query(models.Workout).filter(models.Workout.id == id).first()
     if workout is None:
@@ -25,7 +27,7 @@ async def get_workout(id: int = Path(gt=0), db: Session = Depends(get_db)):
     return workout
 
 
-@router.post("", response_model=schemas.Workout)
+@router.post("", response_model=schemas.WorkoutReply)
 async def create_workout(model_to_create: schemas.CreateWorkout, db: Session = Depends(get_db)):
     created_model = models.Workout(**model_to_create.model_dump())
 
@@ -33,7 +35,7 @@ async def create_workout(model_to_create: schemas.CreateWorkout, db: Session = D
     db.commit()
     db.refresh(created_model)
 
-    return schemas.Workout.model_validate(created_model)
+    return created_model
 
 
 @router.delete("/{id}")

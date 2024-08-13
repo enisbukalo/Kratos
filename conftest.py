@@ -2,6 +2,8 @@ import pytest
 import string
 import random
 
+from datetime import datetime
+
 from fastapi.testclient import TestClient
 
 from sqlalchemy import create_engine
@@ -14,6 +16,7 @@ from app import schemas
 
 
 SKELETON_NAME_LENGTH = 25
+random.seed(1234)
 
 
 @pytest.fixture(scope="function")
@@ -54,61 +57,82 @@ def client(db_fixture: Session) -> TestClient:
 
 
 @pytest.fixture(scope="function")
-def generate_skeletons(client: TestClient) -> list[schemas.Skeleton]:
-    """Responsible for generating a list of Skeleton objects.
+def generate_users(client: TestClient) -> list[schemas.UserReply]:
+    to_return = []
 
-    Args:
-        client (TestClient): FastApi Test Client.
-
-    Returns:
-        list[schemas.Skeleton]: Collection of Skeleton objects that were generated.
-    """
-    made_skeletons: list[schemas.Skeleton] = []
-
-    for _ in range(100):
-        skeleton_name = "".join(random.choices(string.ascii_uppercase + string.digits, k=SKELETON_NAME_LENGTH))
-        skeleton_height = round(random.uniform(0.0, 3.0), 4)
-
-        response = client.post("Skeleton", json={"name": skeleton_name, "height_m": skeleton_height})
+    for _ in range(10):
+        name = "".join(random.choices(string.ascii_uppercase, k=SKELETON_NAME_LENGTH))
+        height = round(random.uniform(1, 100), 4)
+        weight = round(random.uniform(1, 300), 4)
+        response = client.post("/User", json={"name": name, "height": height, "weight": weight})
         assert response.status_code == 200
-
-        skeleton = schemas.Skeleton(**response.json())
-        assert skeleton.name == skeleton_name
-        assert skeleton.height_m == skeleton_height
-        made_skeletons.append(skeleton)
-
-        response = client.get(f"Skeleton/{skeleton.id}")
-        assert response.status_code == 200
-        assert schemas.Skeleton(**response.json()) == skeleton
-
-    return made_skeletons
+        user = schemas.UserReply(**response.json())
+        assert user.name == name
+        assert user.height == height
+        assert user.weight == weight
+        to_return.append(user)
+    return to_return
 
 
 @pytest.fixture(scope="function")
-def generate_bones(client: TestClient, generate_skeletons: list[schemas.Skeleton]) -> list[schemas.Bone]:
-    """Responsible for generating a list of Bone objects.
+def generate_exercises(client: TestClient) -> list[schemas.Exercise]:
+    to_return = []
 
-    Args:
-        client (TestClient): FastApi Test Client.
-
-    Returns:
-        list[schemas.Bone]: Collection of Bone objects that were generated.
-    """
-    made_bones: list[schemas.Bone] = []
-
-    for _ in range(100):
-        bone_name = "".join(random.choices(string.ascii_uppercase + string.digits, k=SKELETON_NAME_LENGTH))
-        bone_length = round(random.uniform(10.0, 60.0), 4)
-        random_skeleton = random.choice(generate_skeletons)
-
-        response = client.post("Bone", json={"name": bone_name, "length_cm": bone_length, "skeleton_id": random_skeleton.id})
+    for _ in range(10):
+        exercise_name = "".join(random.choices(string.ascii_uppercase, k=SKELETON_NAME_LENGTH))
+        response = client.post("/Exercise", json={"name": exercise_name})
         assert response.status_code == 200
+        exercise = schemas.Exercise(**response.json())
+        assert exercise.name == exercise_name
+        to_return.append(exercise)
 
-        bone = schemas.Bone(**response.json())
-        assert bone.name == bone_name
-        assert bone.length_cm == bone_length
-        assert bone.skeleton_id == random_skeleton.id
-        assert bone.skeleton == random_skeleton
-        made_bones.append(bone)
+    return to_return
 
-    return made_bones
+
+@pytest.fixture(scope="function")
+def generate_workouts(client: TestClient, generate_users: list[schemas.UserReply]) -> list[schemas.WorkoutReply]:
+    to_return = []
+
+    for user in generate_users:
+        workout_name = "".join(random.choices(string.ascii_uppercase, k=SKELETON_NAME_LENGTH))
+        response = client.post("/Workout", json={"name": workout_name, "user_id": user.id})
+        assert response.status_code == 200
+        workout = schemas.WorkoutReply(**response.json())
+        assert workout.name == workout_name
+        assert workout.user.id == user.id
+        to_return.append(workout)
+
+    return to_return
+
+
+@pytest.fixture(scope="function")
+def generate_sets(
+    client: TestClient,
+    generate_users: list[schemas.UserReply],
+    generate_workouts: list[schemas.WorkoutReply],
+    generate_exercises: list[schemas.Exercise],
+) -> list[schemas.SetReply]:
+    to_return = []
+
+    for _ in range(10):
+        random_workout = random.choice(generate_workouts)
+        random_exercise = random.choice(generate_exercises)
+        random_user = random.choice(generate_users)
+
+        reps = random.randint(1, 10)
+        date = datetime.now().date().isoformat()
+        exercise_id = random_exercise.id
+        workout_id = random_workout.id
+        user_id = random_user.id
+
+        response = client.post("/Set", json={"reps": reps, "date": date, "exercise_id": exercise_id, "workout_id": workout_id, "user_id": user_id})
+        assert response.status_code == 200
+        created_set = schemas.SetReply(**response.json())
+        assert created_set.reps == reps
+        assert created_set.date.isoformat() == date
+        assert created_set.exercise.id == exercise_id
+        assert created_set.workout.id == workout_id
+        assert created_set.user.id == user_id
+        to_return.append(created_set)
+
+    return to_return

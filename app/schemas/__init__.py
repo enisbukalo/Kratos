@@ -1,6 +1,3 @@
-from .skeleton import *
-from .bone import *
-
 from .users import *
 from .workouts import *
 from .sets import *

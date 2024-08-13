@@ -1,12 +1,10 @@
 from sqlalchemy import Column, Integer, String, FLOAT
 from sqlalchemy.orm import relationship
 
-from app.database import Base, engine
-
-Base.metadata.create_all(bind=engine)
+from app.models import BASE
 
 
-class User(Base):
+class User(BASE):
     __tablename__ = "users"
 
     id = Column(Integer, primary_key=True, index=True)
@@ -15,5 +13,5 @@ class User(Base):
     weight = Column(FLOAT, nullable=False)
 
     # Relationships
-    workouts = relationship("Workout", uselist=True, cascade="all")
-    sets = relationship("ExerciseSet", uselist=True, cascade="all")
+    workouts = relationship("Workout", back_populates="user", uselist=True, cascade="all")
+    sets = relationship("ExerciseSet", back_populates="user", uselist=True, cascade="all")

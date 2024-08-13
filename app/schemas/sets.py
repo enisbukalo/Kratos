@@ -1,12 +1,10 @@
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import BaseModel, ConfigDict, Field, PositiveInt
 from datetime import date as _date
 
 from app.database import Base, engine
 
 from .query_params import GetQueryParams
-from .workouts import Workout
-from .users import User
-from .exercises import Exercise
+
 
 Base.metadata.create_all(bind=engine)
 
@@ -33,12 +31,19 @@ class ExerciseSet(SetBase):
 class CreateSet(BaseModel):
     reps: int = Field(default=5, gt=0)
     date: _date = Field(default=_date.today())
+    exercise_id: PositiveInt
+    workout_id: PositiveInt
+    user_id: PositiveInt
 
 
 class SetQuery(GetQueryParams):
     pass
 
 
-from .bone import Bone
+from .workouts import Workout
+from .users import User
+from .exercises import Exercise
 
-Bone.model_rebuild()
+Workout.model_rebuild()
+User.model_rebuild()
+Exercise.model_rebuild()

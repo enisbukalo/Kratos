@@ -3,7 +3,6 @@ from pydantic import BaseModel, ConfigDict, Field, PositiveInt
 from app.database import Base, engine
 
 from .query_params import GetQueryParams
-from .sets import ExerciseSet
 
 Base.metadata.create_all(bind=engine)
 
@@ -16,6 +15,7 @@ class WorkoutBase(BaseModel):
 class WorkoutReply(BaseModel):
     id: int
     name: str
+    user: "User"
     sets: "list[ExerciseSet]"
 
 
@@ -32,6 +32,8 @@ class WorkoutQuery(GetQueryParams):
     pass
 
 
-from .bone import Bone
+from .sets import ExerciseSet
+from .users import User
 
-Bone.model_rebuild()
+ExerciseSet.model_rebuild()
+User.model_rebuild()

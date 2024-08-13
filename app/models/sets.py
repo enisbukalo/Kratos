@@ -1,12 +1,10 @@
 from sqlalchemy import Column, Integer, DATE, ForeignKey
 from sqlalchemy.orm import relationship
 
-from app.database import Base, engine
-
-Base.metadata.create_all(bind=engine)
+from app.models import BASE
 
 
-class ExerciseSet(Base):
+class ExerciseSet(BASE):
     __tablename__ = "sets"
 
     id = Column(Integer, primary_key=True, index=True)
@@ -15,7 +13,8 @@ class ExerciseSet(Base):
 
     # Relationships
     workout_id = Column(Integer, ForeignKey("workouts.id", ondelete="CASCADE"), nullable=False, index=True)
+    workout = relationship("Workout", back_populates="sets", uselist=False, cascade="all")
     exercise_id = Column(Integer, ForeignKey("exercises.id", ondelete="CASCADE"), nullable=False, index=True)
-    exercises = relationship("Exercise", uselist=True, cascade="all")
+    exercise = relationship("Exercise", uselist=False, cascade="all")
     user_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False, index=True)
-    user = relationship("User", uselist=False, cascade="all")
+    user = relationship("User", back_populates="sets", uselist=False, cascade="all")
