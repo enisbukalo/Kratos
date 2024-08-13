@@ -19,7 +19,7 @@ class UserReply(BaseModel):
     name: str
     height: float
     weight: float
-    workouts: "list[Workout]"
+    workouts: "list[WorkoutReply]"
 
 
 class User(UserBase):
@@ -36,6 +36,6 @@ class UserQuery(GetQueryParams):
     pass
 
 
-from .workouts import Workout
+from .workouts import WorkoutReply
 
-Workout.model_rebuild()
+WorkoutReply.model_rebuild()

@@ -15,7 +15,6 @@ class WorkoutBase(BaseModel):
 class WorkoutReply(BaseModel):
     id: int
     name: str
-    user: "User"
     sets: "list[ExerciseSet]"
 
 
