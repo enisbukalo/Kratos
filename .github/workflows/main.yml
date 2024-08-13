@@ -1,6 +1,8 @@
 name: Test & Build
 
-on: [push]
+on:
+  pull_request:
+    branches: [main]
 
 env:
   DOCKER_IMAGE_NAME: kratos_image
@@ -17,7 +19,7 @@ jobs:
 
     defaults:
       run:
-        working-directory: .
+        working-directory: ./Backend
 
     steps:
       - uses: actions/checkout@v4
@@ -36,10 +38,10 @@ jobs:
         run: python -m pytest
 
   build:
-    name: Build Docker Image
+    name: Build Backend Docker Image
     needs: [test-python]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
       - name: Build the Docker image
-        run: docker build -t $DOCKER_IMAGE_NAME .
+        run: docker build -t $DOCKER_IMAGE_NAME ./Backend
