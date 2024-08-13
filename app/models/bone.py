@@ -1,12 +1,12 @@
 from sqlalchemy import Column, ForeignKey, Integer, String, FLOAT
 from sqlalchemy.orm import relationship
 
-from app.models import BASE, ENGINE
+from app.database import Base, engine
 
-BASE.metadata.create_all(bind=ENGINE)
+Base.metadata.create_all(bind=engine)
 
 
-class Bone(BASE):
+class Bone(Base):
     __tablename__ = "bones"
 
     id = Column(Integer, primary_key=True, index=True)

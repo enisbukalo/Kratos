@@ -6,12 +6,14 @@ from app.database import Base, engine
 Base.metadata.create_all(bind=engine)
 
 
-class Skeleton(Base):
-    __tablename__ = "skeletons"
+class User(Base):
+    __tablename__ = "users"
 
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String, nullable=False)
-    height_m = Column(FLOAT, nullable=False)
+    height = Column(FLOAT, nullable=False)
+    weight = Column(FLOAT, nullable=False)
 
     # Relationships
-    bones = relationship("Bone", back_populates="skeleton", uselist=True, cascade="all")
+    workouts = relationship("Workout", uselist=True, cascade="all")
+    sets = relationship("ExerciseSet", uselist=True, cascade="all")

@@ -3,6 +3,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from .routers import skeleton, bone
+from .routers import exercises, sets, workouts, users
 
 
 def create_app() -> FastAPI:
@@ -14,6 +15,11 @@ def create_app() -> FastAPI:
 
     created_app.include_router(skeleton.router)
     created_app.include_router(bone.router)
+
+    created_app.include_router(users.router)
+    created_app.include_router(workouts.router)
+    created_app.include_router(sets.router)
+    created_app.include_router(exercises.router)
 
     return created_app
 
