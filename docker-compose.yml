@@ -1,0 +1,30 @@
+name: kratos
+
+services:
+  backend:
+    container_name: kratos_backend
+    build:
+      context: .
+      dockerfile: Dockerfile_Backend
+    image: kratos_backend_image
+    working_dir: /Backend
+    volumes:
+      - ./Backend:/Backend
+    ports:
+      - 8080:8080
+    environment:
+      - WATCHFILES_FORCE_POLLING=true
+    restart: on-failure
+
+  frontend:
+    container_name: kratos_frontend
+    build:
+      context: .
+      dockerfile: Dockerfile_Frontend
+    image: kratos_frontend_image
+    working_dir: /usr/src/app
+    ports:
+      - 3030:3030
+    environment:
+      - NG_CLI_ANALYTICS=false
+    restart: on-failure

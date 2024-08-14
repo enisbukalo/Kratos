@@ -36,12 +36,3 @@ jobs:
         run: pylint --load-plugins pylint_pydantic --extension-pkg-whitelist='pydantic' ./app --rcfile=.pylintrc
       - name: Run Tests
         run: python -m pytest
-
-  build:
-    name: Build Backend Docker Image
-    needs: [test-python]
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - name: Build the Docker image
-        run: docker build -t $DOCKER_IMAGE_NAME ./Backend
