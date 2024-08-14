@@ -1,5 +1,5 @@
 # Kratos
-Workout app named after the Greek god of strength, Heracles.
+Workout app named after the Greek god of strength, Kratos.
 
 # To Run Locally
 ## Backend
