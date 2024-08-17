@@ -1,8 +1,8 @@
 import { HttpClient, HttpErrorResponse, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 
-import { Observable, throwError } from 'rxjs';
-import { catchError, tap, mergeMap, map, concatMap } from 'rxjs/operators';
+import { Observable } from 'rxjs';
+import { catchError, tap } from 'rxjs/operators';
 
 import { UserQueryParams, WorkoutQueryParams, SetQueryParams, ExerciseQueryParams } from './kratos-api-types';
 import { User, UserReply, Workout, WorkoutReply, Set, SetReply, Exercise } from './kratos-api-types';
