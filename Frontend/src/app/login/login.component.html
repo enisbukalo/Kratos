@@ -1,13 +1,22 @@
-<div class="row">
-    <div class="column space-between">
-        @for (user of users; track user.id)
-        {
-        <p-avatar label="{{ getFirstLetter(user.name) }}" styleClass="mr-2" size="xlarge" shape="circle" />
-        <div class="user-container">
-            <h3>{{user.name}}</h3>
-            <h4>Height: {{user.height}} in</h4>
-            <h4>Weight: {{user.weight}} lbs</h4>
-        </div>
-        }
+<div class="container">
+    @for (user of users; track user.id)
+    {
+    <div class="user">
+        <p-card class="user-card" header="{{user.name}}">
+            <ng-template pTemplate="header">
+                <p-avatar class="user-avatar" label="{{ getFirstLetter(user.name) }}" styleClass="mr-2" size="xlarge"
+                    shape="circle" />
+            </ng-template>
+            <div class="user-info">
+                <h3 class="user-label">Height (in)</h3>
+                <h3 class="user-info-text">{{user.height}}</h3>
+                <h3 class="user-label">Weight (lbs)</h3>
+                <h3 class="user-info-text">{{user.weight}}</h3>
+            </div>
+            <ng-template pTemplate="footer">
+                <p-button class="user-button" label="GO" severity="warning" [raised]="true" [rounded]="true"></p-button>
+            </ng-template>
+        </p-card>
     </div>
+    }
 </div>

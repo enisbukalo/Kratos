@@ -4,11 +4,13 @@ import { KratosServiceService } from '../kratos-service.service';
 import { GetQueryParams, UserReply } from '../kratos-api-types';
 import { CommonModule } from '@angular/common';
 import { AvatarModule } from 'primeng/avatar';
+import { CardModule } from 'primeng/card';
+import { ButtonModule } from 'primeng/button';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [CommonModule, AvatarModule],
+  imports: [CommonModule, AvatarModule, CardModule, ButtonModule],
   templateUrl: './login.component.html',
   styleUrl: './login.component.scss'
 })

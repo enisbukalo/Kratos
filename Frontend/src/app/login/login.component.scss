@@ -1,0 +1,48 @@
+.container {
+    width: auto;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+    padding: 20px;
+}
+
+.user {
+    min-width: 260px;
+    max-width: 260px;
+    width: 100%;
+    text-align: center;
+    padding: 2.5px;
+}
+
+:host ::ng-deep .p-card .p-card-header {
+    padding: 10px;
+}
+
+:host ::ng-deep .p-card {
+    border-radius: 20px;
+}
+
+.user-card {
+    text-align: center;
+}
+
+.user-button {
+    margin: auto;
+    display: flex;
+    width: fit-content;
+}
+
+.user-info {
+    display: grid;
+    grid-template-rows: 1fr 1fr;
+    grid-template-columns: 1fr 1fr;
+    justify-content: space-between;
+}
+
+.user-label {
+    text-align: left;
+}
+
+.user-info-text {
+    text-align: right;
+}
