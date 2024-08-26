@@ -13,6 +13,7 @@ class SetBase(BaseModel):
     id: int
     reps: int
     date: _date
+    exercise: "Exercise"
 
 
 class SetReply(BaseModel):

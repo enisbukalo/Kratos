@@ -9,9 +9,7 @@ import { User, UserReply, Workout, WorkoutReply, Set, SetReply, Exercise } from 
 
 import { KratosErrorHandler } from './kratos-error-handler';
 
-@Injectable({
-  providedIn: 'root'
-})
+@Injectable({ providedIn: 'root' })
 export class KratosServiceService {
   private readonly backendEndpoint = 'http://localhost:8080';
   private readonly userEndpoint = '/User';

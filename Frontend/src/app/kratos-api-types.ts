@@ -67,6 +67,7 @@ export interface CreateUser {
 export type SetBase = {
     id?: number
     reps?: number
+    exercise?: Exercise
     date?: Date
 }
 
