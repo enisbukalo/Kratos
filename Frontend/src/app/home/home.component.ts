@@ -1,18 +1,28 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { KratosServiceService } from '../kratos-service.service';
+import { CookieService } from 'ngx-cookie-service';
 
 @Component({
   selector: 'app-home',
   standalone: true,
   imports: [],
   templateUrl: './home.component.html',
-  styleUrl: './home.component.scss'
+  styleUrl: './home.component.scss',
 })
 export class HomeComponent {
-  constructor(private apiService: KratosServiceService) { }
+  currentUserId: number;
+
+  cookieService = inject(CookieService);
+
+  constructor(private apiService: KratosServiceService) {
+    this.currentUserId = Number(this.cookieService.get('currentUserId'));
+  }
 
   ngOnInit(): void {
-    this.apiService.getUser(1).subscribe((users) => {
+    console.log()
+    this.apiService.getUser(2).subscribe((users) => {
+      this.cookieService.set('currentUserId', String(users.id));
+      console.log("Current User Id: " + this.currentUserId);
       console.log(users);
     });
   }
