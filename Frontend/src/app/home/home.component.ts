@@ -1,6 +1,7 @@
 import { Component, inject } from '@angular/core';
 import { KratosServiceService } from '../kratos-service.service';
 import { CookieService } from 'ngx-cookie-service';
+import { UserReply } from '../kratos-api-types';
 
 @Component({
   selector: 'app-home',
@@ -10,20 +11,14 @@ import { CookieService } from 'ngx-cookie-service';
   styleUrl: './home.component.scss',
 })
 export class HomeComponent {
-  currentUserId: number;
-
   cookieService = inject(CookieService);
 
+  currentUser: UserReply;
+
   constructor(private apiService: KratosServiceService) {
-    this.currentUserId = Number(this.cookieService.get('currentUserId'));
+    this.currentUser = JSON.parse(this.cookieService.get('currentUser'));
+    console.log("Current User: \n" + JSON.stringify(this.currentUser));
   }
 
-  ngOnInit(): void {
-    console.log()
-    this.apiService.getUser(2).subscribe((users) => {
-      this.cookieService.set('currentUserId', String(users.id));
-      console.log("Current User Id: " + this.currentUserId);
-      console.log(users);
-    });
-  }
+  ngOnInit(): void { }
 }
