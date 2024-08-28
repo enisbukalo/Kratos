@@ -8,14 +8,19 @@
 }
 
 .user {
+    display: flex;
     min-width: 260px;
     max-width: 260px;
     width: 100%;
+    height: fit-content;
     text-align: center;
     padding: 2.5px;
 }
 
 :host ::ng-deep .p-card .p-card-header {
+    display: flex;
+    justify-content: center;
+    margin: auto;
     padding: 10px;
 }
 
@@ -24,7 +29,8 @@
 }
 
 .user-card {
-    text-align: center;
+    display: flex;
+    justify-content: center;
 }
 
 .user-button {
@@ -49,7 +55,7 @@
 }
 
 .name-input {
-    width: 100%;
+    width: fit-content;
     min-height: 30px;
 }
 

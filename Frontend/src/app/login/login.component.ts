@@ -27,18 +27,6 @@ import { MessageService } from 'primeng/api';
 export class LoginComponent {
   @Input() user!: UserReply;
 
-  msgs: any[] = [
-    {
-      severity: 'success',
-      summary: 'GeeksforGeeks',
-      detail: "This is a message"
-    },
-    {
-      severity: 'error',
-      summary: 'GeeksforGeeks',
-      detail: "This is a message"
-    }
-  ];
   currentUser: String;
   users: UserReply[] = [];
 
@@ -47,16 +35,19 @@ export class LoginComponent {
   newUserHeight: number = 0;
 
   cookieService = inject(CookieService);
-  messageService: MessageService = inject(MessageService);
   toastModule = inject(ToastModule);
   router = inject(Router);
 
-  constructor(private apiService: KratosServiceService) {
+  constructor(private apiService: KratosServiceService, private messageService: MessageService) {
     this.currentUser = this.cookieService.get('currentUser');
-    this.hideMessages();
+    this.messageService.clear();
   }
 
   ngOnInit(): void {
+    this.getAllUsers();
+  }
+
+  getAllUsers(): void {
     const queryParams: GetQueryParams = { 'page_size': 10, 'page_number': 1, 'sort': false };
     this.apiService.getUsers(queryParams).subscribe((users) => {
       this.users = users;
@@ -76,22 +67,28 @@ export class LoginComponent {
 
   createUser(name: string, height: number, weight: number): void {
     const user: CreateUser = { name: name, height: height, weight: weight };
-    this.apiService.createUser(user).subscribe((user) => {
-      console.log("User Created: \n" + JSON.stringify(user));
+    this.apiService.createUser(user).subscribe({
+      next: (user) => {
+        console.log("User Created: \n" + JSON.stringify(user));
+        this.showSuccess();
+        this.getAllUsers();
+      },
+      error: (error) => {
+        console.log(error);
+        this.showError();
+      }
     });
-    // this.showSuccess();
-    window.location.reload();
   }
 
   showSuccess(): void {
-    this.msgs.push({ severity: 'success', summary: 'Success Message', detail: 'User Create Successfully' });
+    this.messageService.add({ severity: 'success', summary: 'Success Message', detail: 'User Create Successfully' });
   }
 
   showError(): void {
-    this.msgs.push({ severity: 'error', summary: 'Error Message', detail: 'Failed Creating User' });
+    this.messageService.add({ severity: 'error', summary: 'Error Message', detail: 'Failed Creating User' });
   }
 
   hideMessages() {
-    this.msgs = [];
+    this.messageService.clear();
   }
 }
