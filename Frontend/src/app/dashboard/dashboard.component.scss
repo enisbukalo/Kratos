@@ -1,0 +1,13 @@
+:host ::ng-deep .p-button {
+    font-weight: bolder;
+    font-size: larger;
+}
+
+:host ::ng-deep .p-sidebar {
+    display: flex;
+    width: fit-content;
+    max-width: 200px;
+    align-content: flex-start;
+    align-items: flex-start;
+    flex-wrap: wrap;
+}
