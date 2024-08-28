@@ -8,11 +8,12 @@ import { SidebarModule } from 'primeng/sidebar';
 import { PanelModule } from 'primeng/panel';
 import { DividerModule } from 'primeng/divider';
 import { Router } from '@angular/router';
+import { ChartModule } from 'primeng/chart';
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [ButtonModule, AvatarModule, SidebarModule, PanelModule, DividerModule],
+  imports: [PanelModule, ChartModule, ButtonModule, AvatarModule, SidebarModule, PanelModule, DividerModule],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.scss',
 })
@@ -21,11 +22,32 @@ export class DashboardComponent {
   router = inject(Router);
 
   currentUser: UserReply;
-  sidebarVisible: boolean = true;
+  sidebarVisible: boolean = false;
+  data: any;
+  options: any;
 
   constructor(private apiService: KratosServiceService) {
     this.currentUser = JSON.parse(this.cookieService.get('currentUser'));
     console.log("Current User: \n" + JSON.stringify(this.currentUser));
+    this.data = {
+      labels: ['January', 'February', 'March'],
+      datasets: [
+        {
+          label: 'Test Weight',
+          data: [298, 297, 296],
+        }
+      ]
+    };
+    this.options = {
+      title: {
+        display: true,
+        text: 'Weight Chart',
+        fontSize: 16
+      },
+      legend: {
+        position: 'bottom'
+      }
+    }
   }
 
   ngOnInit(): void { }
