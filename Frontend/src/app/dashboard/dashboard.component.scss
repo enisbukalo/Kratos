@@ -1,6 +1,7 @@
 :host ::ng-deep .p-button {
     font-weight: bolder;
     font-size: larger;
+    border-radius: 10px;
 }
 
 :host ::ng-deep .p-sidebar {
@@ -11,7 +12,7 @@
 }
 
 :host ::ng-deep .p-sidebar .p-sidebar-footer {
-    width: 100%;
+    width: 100vw;
 }
 
 :host ::ng-deep .p-panel {
