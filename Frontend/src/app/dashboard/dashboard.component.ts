@@ -27,6 +27,7 @@ export class DashboardComponent {
   sidebarVisible: boolean = false;
   data: any;
   options: any;
+  workoutOptions: any;
 
   constructor(private apiService: KratosServiceService) {
     this.currentUser = JSON.parse(this.cookieService.get('currentUser'));
@@ -34,11 +35,11 @@ export class DashboardComponent {
     console.log("Current User: \n" + JSON.stringify(this.currentUser));
 
     this.data = {
-      labels: ['January', 'February', 'March'],
+      labels: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'],
       datasets: [
         {
           label: 'Test Weight',
-          data: [298, 296, 295],
+          data: [298, 296, 295, 295, 294.8, 293, 291],
         }
       ]
     };

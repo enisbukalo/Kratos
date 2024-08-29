@@ -22,24 +22,20 @@
         <div></div>
     </div>
     <p-panel [toggleable]="false">
-        <ng-template pTemplate="header">
-            <h1>Weight</h1>
-        </ng-template>
+        <ng-template pTemplate="header">Weight</ng-template>
         <ng-template pTemplate="content">
-            <p-chart width="40vw" type="line" [data]="data" [options]="options"></p-chart>
+            <p-chart type="line" [data]="data" [options]="options"></p-chart>
         </ng-template>
     </p-panel>
 
     <p-panel [toggleable]="false">
-        <ng-template pTemplate="header">
-            <h1>Workouts</h1>
-        </ng-template>
+        <ng-template pTemplate="header">Workouts</ng-template>
         <ng-template pTemplate="content">
             <p-scroller [items]="currentUsersWorkouts" [itemSize]="50" scrollHeight="200px"
                 styleClass="border-1 surface-border" [style]="{'width': '200px', 'height': '200px'}">
-                <ng-template pTemplate="item" let-item let-options="options">
-                    <div class="flex align-items-center p-2" style="height: 25px;">
-                        <h3>{{ item.name }}</h3>
+                <ng-template pTemplate="item" let-item let-options="workoutOptions">
+                    <div class="flex align-items-left p-2" style="height: 25px;">
+                        <p-button class="workout-button" label="{{ item.name }}" [link]="true" [size]="'small'" />
                     </div>
                 </ng-template>
             </p-scroller>
@@ -47,11 +43,9 @@
     </p-panel>
 
     <p-panel [toggleable]="false">
-        <ng-template pTemplate="header">
-            <h1>Exercises</h1>
-        </ng-template>
+        <ng-template pTemplate="header">Exercises</ng-template>
         <ng-template pTemplate="content">
-            <h3>List Of Exercises In Workouts</h3>
+            <h4>List Of Exercises In Workouts</h4>
         </ng-template>
     </p-panel>
 </div>
