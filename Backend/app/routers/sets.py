@@ -56,6 +56,16 @@ async def delete_set(id: int = Path(gt=0), db: Session = Depends(get_db)):
 
 @router.put("/{id}", response_model=schemas.ExerciseSet)
 async def update_set(model_to_update: schemas.CreateSet, id: int = Path(gt=0), db: Session = Depends(get_db)):
+    exercise = db.query(models.Exercise).filter(models.Exercise.id == model_to_update.exercise_id).first()
+    if exercise is None:
+        raise HTTPException(status_code=404, detail=f"No Exercise With Id {model_to_update.exercise_id} Exists.")
+    workout = db.query(models.Workout).filter(models.Workout.id == model_to_update.workout_id).first()
+    if workout is None:
+        raise HTTPException(status_code=404, detail=f"No Workout With Id {model_to_update.workout_id} Exists.")
+    user = db.query(models.User).filter(models.User.id == model_to_update.user_id).first()
+    if user is None:
+        raise HTTPException(status_code=404, detail=f"No User With Id {model_to_update.user_id} Exists.")
+
     query = db.query(models.ExerciseSet).filter(models.ExerciseSet.id == id)
     set_to_update = query.first()
 
@@ -66,4 +76,4 @@ async def update_set(model_to_update: schemas.CreateSet, id: int = Path(gt=0), d
     db.commit()
     db.refresh(set_to_update)
 
-    return schemas.ExerciseSet(id=set_to_update.id, reps=set_to_update.reps, date=set_to_update.date)
+    return schemas.ExerciseSet(id=set_to_update.id, reps=set_to_update.reps, date=set_to_update.date, exercise=exercise)

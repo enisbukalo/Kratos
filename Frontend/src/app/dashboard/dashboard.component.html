@@ -1,0 +1,51 @@
+<p-sidebar [(visible)]="sidebarVisible" position="left" [baseZIndex]="10000" showCloseIcon="false">
+    <p-button [style]="{'width': '100%'}" (onClick)="goToDashboard()" label="Dashboard" severity="info"
+        [raised]="true" />
+    <p-divider />
+    <p-button [style]="{'width': '100%'}" (onClick)="goToWorkouts()" label="Workouts" severity="help" [raised]="true" />
+    <p-divider />
+    <p-button [style]="{'width': '100%'}" (onClick)="goToProfile()" label="Profile" severity="success"
+        [raised]="true" />
+    <p-divider />
+
+    <ng-template pTemplate="footer">
+        <p-divider />
+        <p-button [style]="{'width': '100%'}" (onClick)=" goToLogin()" label="Logout" severity="danger"
+            [raised]="true" />
+    </ng-template>
+</p-sidebar>
+
+<div class="dashboard-container">
+    <div class="dashboard-header">
+        <p-button type="button" (click)="sidebarVisible = true" icon="pi pi-arrow-right" size="large" />
+        <h1>{{currentUser.name}}</h1>
+        <div></div>
+    </div>
+    <p-panel [toggleable]="false">
+        <ng-template pTemplate="header">Weight</ng-template>
+        <ng-template pTemplate="content">
+            <p-chart type="line" [data]="data" [options]="options"></p-chart>
+        </ng-template>
+    </p-panel>
+
+    <p-panel [toggleable]="false">
+        <ng-template pTemplate="header">Workouts</ng-template>
+        <ng-template pTemplate="content">
+            <p-scroller [items]="currentUsersWorkouts" [itemSize]="50" scrollHeight="200px"
+                styleClass="border-1 surface-border" [style]="{'width': '200px', 'height': '200px'}">
+                <ng-template pTemplate="item" let-item let-options="workoutOptions">
+                    <div class="flex align-items-left p-2" style="height: 25px;">
+                        <p-button class="workout-button" label="{{ item.name }}" [link]="true" [size]="'small'" />
+                    </div>
+                </ng-template>
+            </p-scroller>
+        </ng-template>
+    </p-panel>
+
+    <p-panel [toggleable]="false">
+        <ng-template pTemplate="header">Exercises</ng-template>
+        <ng-template pTemplate="content">
+            <h4>List Of Exercises In Workouts</h4>
+        </ng-template>
+    </p-panel>
+</div>

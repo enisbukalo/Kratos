@@ -1,0 +1,70 @@
+.container {
+    width: auto;
+    min-width: 350px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+    padding: 20px;
+}
+
+.user {
+    display: flex;
+    min-width: 260px;
+    max-width: 260px;
+    width: 100%;
+    height: fit-content;
+    text-align: center;
+    padding: 2.5px;
+}
+
+:host ::ng-deep .p-card .p-card-header {
+    display: flex;
+    justify-content: center;
+    margin: auto;
+    padding: 10px;
+}
+
+:host ::ng-deep .p-card {
+    border-radius: 20px;
+}
+
+.user-card {
+    display: flex;
+    justify-content: center;
+}
+
+.user-button {
+    margin: auto;
+    display: flex;
+    width: fit-content;
+}
+
+.user-info {
+    display: grid;
+    grid-template-rows: 1fr 1fr;
+    grid-template-columns: 1fr 1fr;
+    justify-content: space-between;
+}
+
+.user-label {
+    text-align: left;
+}
+
+.user-info-text {
+    text-align: right;
+}
+
+.name-input {
+    width: fit-content;
+    min-height: 30px;
+}
+
+.name-label {
+    font-size: larger;
+    font-weight: bold;
+}
+
+.create-user-input {
+    font-weight: bold;
+    margin: 10px;
+}
