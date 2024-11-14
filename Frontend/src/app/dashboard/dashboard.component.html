@@ -45,7 +45,15 @@
     <p-panel [toggleable]="false">
         <ng-template pTemplate="header">Exercises</ng-template>
         <ng-template pTemplate="content">
-            <h4>List Of Exercises In Workouts</h4>
+            <p-scroller [items]="currentUsersExercises" [itemSize]="50" scrollHeight="200px"
+                styleClass="border-1 surface-border" [style]="{'width': '200px', 'height': '200px'}">
+                <ng-template pTemplate="item" let-item>
+                    <div class="flex align-items-left p-2" style="height: 25px;">
+                        <p-button class="exercise-button" label="{{ item.exercise.name }} - {{ item.reps }} reps"
+                            [link]="true" [size]="'small'" />
+                    </div>
+                </ng-template>
+            </p-scroller>
         </ng-template>
     </p-panel>
 </div>

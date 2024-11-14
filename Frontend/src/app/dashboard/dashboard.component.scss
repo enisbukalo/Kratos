@@ -10,6 +10,12 @@
     border-radius: 10px;
 }
 
+:host ::ng-deep .exercise-button .p-button {
+    font-weight: bold;
+    font-size: medium;
+    border-radius: 10px;
+}
+
 :host ::ng-deep .p-sidebar {
     display: flex;
     width: 100%;
@@ -17,7 +23,7 @@
     flex-wrap: wrap;
 }
 
-:host ::ng-deep .p-sidebar .p-sidebar-footer {
+:host ::ng-deep .p-sidebar .pf-sidebar-footer {
     width: 100vw;
 }
 
@@ -56,4 +62,33 @@
     align-items: center;
     background: #1e1e1e;
     justify-content: space-between;
+}
+
+.workouts-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+    padding: 20px;
+}
+
+.workout-card {
+    transition: transform 0.2s;
+
+    &:hover {
+        transform: translateY(-5px);
+    }
+
+    ::ng-deep .p-card {
+        background: var(--surface-card);
+        border-radius: 10px;
+    }
+}
+
+.workout-details {
+    padding: 10px 0;
+
+    p {
+        margin: 5px 0;
+        color: var(--text-color);
+    }
 }
