@@ -13,7 +13,7 @@ export const routes: Routes = [
         component: LoginComponent,
     },
     {
-        path: 'workout',
+        path: 'workout/:id',
         component: WorkoutComponent,
     }
 ];

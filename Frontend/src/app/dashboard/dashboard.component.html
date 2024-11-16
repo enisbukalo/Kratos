@@ -1,59 +1,58 @@
-<p-sidebar [(visible)]="sidebarVisible" position="left" [baseZIndex]="10000" showCloseIcon="false">
-    <p-button [style]="{'width': '100%'}" (onClick)="goToDashboard()" label="Dashboard" severity="info"
-        [raised]="true" />
-    <p-divider />
-    <p-button [style]="{'width': '100%'}" (onClick)="goToWorkouts()" label="Workouts" severity="help" [raised]="true" />
-    <p-divider />
-    <p-button [style]="{'width': '100%'}" (onClick)="goToProfile()" label="Profile" severity="success"
-        [raised]="true" />
-    <p-divider />
+<app-sidebar #sidebar [isOpen]="sidebarVisible" (dashboardClick)="goToDashboard()" (profileClick)="goToProfile()"
+    (workoutsClick)="goToWorkouts()" (loginClick)="goToLogin()">
 
-    <ng-template pTemplate="footer">
-        <p-divider />
-        <p-button [style]="{'width': '100%'}" (onClick)=" goToLogin()" label="Logout" severity="danger"
-            [raised]="true" />
-    </ng-template>
-</p-sidebar>
-
-<div class="dashboard-container">
-    <div class="dashboard-header">
-        <p-button type="button" (click)="sidebarVisible = true" icon="pi pi-arrow-right" size="large" />
+    <mat-toolbar class="modern-toolbar">
+        <button mat-icon-button (click)="sidebar.toggle()">
+            <mat-icon>menu</mat-icon>
+        </button>
         <h1>{{currentUser.name}}</h1>
-        <div></div>
+    </mat-toolbar>
+
+    <div class="dashboard-content">
+        <div class="grid-container">
+            <!-- Weight Chart -->
+            <mat-card appearance="outlined">
+                <mat-card-header>
+                    <mat-card-title>Weight</mat-card-title>
+                </mat-card-header>
+                <mat-card-content>
+                    <div class="chart-container">
+                        <p-chart type="line" [data]="data" [options]="options"></p-chart>
+                    </div>
+                </mat-card-content>
+            </mat-card>
+
+            <!-- Workouts -->
+            <mat-card appearance="outlined">
+                <mat-card-header>
+                    <mat-card-title>Workouts</mat-card-title>
+                </mat-card-header>
+                <mat-card-content>
+                    <mat-nav-list>
+                        <mat-list-item *ngFor="let workout of currentUsersWorkouts">
+                            <button mat-button class="full-width-button" (click)="goToWorkout(workout)">
+                                {{workout.name}}
+                            </button>
+                        </mat-list-item>
+                    </mat-nav-list>
+                </mat-card-content>
+            </mat-card>
+
+            <!-- Exercises -->
+            <mat-card appearance="outlined">
+                <mat-card-header>
+                    <mat-card-title>Exercises</mat-card-title>
+                </mat-card-header>
+                <mat-card-content>
+                    <mat-nav-list>
+                        <mat-list-item *ngFor="let item of currentUsersExercises">
+                            <button mat-button class="full-width-button">
+                                {{item.exercise?.name}}
+                            </button>
+                        </mat-list-item>
+                    </mat-nav-list>
+                </mat-card-content>
+            </mat-card>
+        </div>
     </div>
-    <p-panel [toggleable]="false">
-        <ng-template pTemplate="header">Weight</ng-template>
-        <ng-template pTemplate="content">
-            <p-chart type="line" [data]="data" [options]="options"></p-chart>
-        </ng-template>
-    </p-panel>
-
-    <p-panel [toggleable]="false">
-        <ng-template pTemplate="header">Workouts</ng-template>
-        <ng-template pTemplate="content">
-            <p-scroller [items]="currentUsersWorkouts" [itemSize]="50" scrollHeight="200px"
-                styleClass="border-1 surface-border" [style]="{'width': '200px', 'height': '200px'}">
-                <ng-template pTemplate="item" let-item let-options="workoutOptions">
-                    <div class="flex align-items-left p-2" style="height: 25px;">
-                        <p-button class="workout-button" label="{{ item.name }}" [link]="true" [size]="'small'" />
-                    </div>
-                </ng-template>
-            </p-scroller>
-        </ng-template>
-    </p-panel>
-
-    <p-panel [toggleable]="false">
-        <ng-template pTemplate="header">Exercises</ng-template>
-        <ng-template pTemplate="content">
-            <p-scroller [items]="currentUsersExercises" [itemSize]="50" scrollHeight="200px"
-                styleClass="border-1 surface-border" [style]="{'width': '200px', 'height': '200px'}">
-                <ng-template pTemplate="item" let-item>
-                    <div class="flex align-items-left p-2" style="height: 25px;">
-                        <p-button class="exercise-button" label="{{ item.exercise.name }} - {{ item.reps }} reps"
-                            [link]="true" [size]="'small'" />
-                    </div>
-                </ng-template>
-            </p-scroller>
-        </ng-template>
-    </p-panel>
-</div>
+</app-sidebar>

@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, DATE, ForeignKey
+from sqlalchemy import Column, Integer, DATE, ForeignKey, FLOAT
 from sqlalchemy.orm import relationship
 
 from app.models import BASE
@@ -9,6 +9,8 @@ class ExerciseSet(BASE):
 
     id = Column(Integer, primary_key=True, index=True)
     reps = Column(Integer, nullable=False)
+    weight = Column(FLOAT, nullable=False)
+    duration = Column(Integer, nullable=False)  # Duration in seconds
     date = Column(DATE, nullable=False)
 
     # Relationships

@@ -3,46 +3,49 @@
     @for (user of users; track user.id)
     {
     <div class="user">
-        <p-card class="user-card" header="{{user.name}}">
-            <p-divider />
+        <p-card>
             <ng-template pTemplate="header">
-                <p-avatar class="user-avatar" label="{{ getFirstLetter(user.name) }}" styleClass="mr-2" size="xlarge"
-                    shape="circle" />
+                <p-avatar [label]="getFirstLetter(user.name)" styleClass="mr-2" size="xlarge" shape="circle" />
+                <h2>{{user.name}}</h2>
             </ng-template>
+
             <div class="user-info">
-                <h3 class="user-label">Height (in)</h3>
-                <h3 class="user-info-text">{{user.height}}</h3>
-                <h3 class="user-label">Weight (lbs)</h3>
-                <h3 class="user-info-text">{{user.weight}}</h3>
+                <span class="user-label">Height (in)</span>
+                <span class="user-info-text">{{user.height}}</span>
+                <span class="user-label">Weight (lbs)</span>
+                <span class="user-info-text">{{user.weight}}</span>
             </div>
-            <p-divider />
+
             <ng-template pTemplate="footer">
-                <p-button class="user-button" (onClick)="selectUser(user)" label="GO" severity="warning" [raised]="true"
-                    [rounded]="true"></p-button>
+                <p-button (onClick)="selectUser(user)" label="Select User" [raised]="true" [rounded]="true"></p-button>
             </ng-template>
         </p-card>
     </div>
     }
+
     <div class="user">
-        <p-card class="user-card" header="Create User">
+        <p-card>
             <ng-template pTemplate="header">
-                <p-skeleton class="user-avatar" shape="circle" size="5rem" />
+                <div class="avatar-container">
+                    <p-skeleton shape="circle" size="5rem" />
+                </div>
+                <h2>Create New User</h2>
             </ng-template>
-            <p-divider />
+
             <label class="name-label">Name</label>
-            <input class="create-user-input name-input" pInputText [(ngModel)]="newUserName" />
-            <p-divider />
-            <label class="name-label">Weight</label>
-            <p-inputNumber class="create-user-input" [(ngModel)]="newUserWeight" placeholder="Enter Weight"
-                mode="decimal" suffix=" lbs" [minFractionDigits]="2" [useGrouping]="false" />
-            <p-divider />
-            <label class="name-label">Height</label>
-            <p-inputNumber class="create-user-input" [(ngModel)]="newUserHeight" placeholder="Enter Height"
-                mode="decimal" suffix=" in" [minFractionDigits]="2" [useGrouping]="false" />
-            <p-divider />
+            <input class="create-user-input" pInputText [(ngModel)]="newUserName" />
+
+            <label class="name-label">Weight (lbs)</label>
+            <p-inputNumber class="create-user-input" [(ngModel)]="newUserWeight" [minFractionDigits]="2"
+                [useGrouping]="false" />
+
+            <label class="name-label">Height (in)</label>
+            <p-inputNumber class="create-user-input" [(ngModel)]="newUserHeight" [minFractionDigits]="2"
+                [useGrouping]="false" />
+
             <ng-template pTemplate="footer">
-                <p-button class="user-button" (onClick)="createUser(newUserName, newUserHeight, newUserWeight)"
-                    label="Create" severity="success" [raised]="true" [rounded]="true"></p-button>
+                <p-button (onClick)="createUser(newUserName, newUserHeight, newUserWeight)" label="Create User"
+                    [raised]="true" [rounded]="true"></p-button>
             </ng-template>
         </p-card>
     </div>

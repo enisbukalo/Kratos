@@ -1,1 +1,33 @@
-<p>workout works!</p>
+<app-sidebar #sidebar [isOpen]="sidebarVisible" (dashboardClick)="goToDashboard()" (profileClick)="goToProfile()"
+    (workoutsClick)="goToWorkouts()" (loginClick)="goToLogin()">
+
+    <mat-toolbar class="modern-toolbar">
+        <button mat-icon-button (click)="sidebar.toggle()">
+            <mat-icon>menu</mat-icon>
+        </button>
+        <button mat-icon-button (click)="goBack()">
+            <mat-icon>arrow_back</mat-icon>
+        </button>
+        <h1>{{workout?.name}}</h1>
+    </mat-toolbar>
+
+    <div class="workout-content">
+        <mat-card appearance="outlined">
+            <mat-card-header>
+                <mat-card-title>Sets</mat-card-title>
+            </mat-card-header>
+            <mat-card-content>
+                <mat-list>
+                    <mat-list-item *ngFor="let set of sets">
+                        <div class="set-item">
+                            <span class="exercise-name">{{set.exercise?.name}}</span>
+                            <div class="set-details">
+                                <span>{{set.reps}} reps</span>
+                            </div>
+                        </div>
+                    </mat-list-item>
+                </mat-list>
+            </mat-card-content>
+        </mat-card>
+    </div>
+</app-sidebar>

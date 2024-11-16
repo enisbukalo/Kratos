@@ -119,15 +119,30 @@ def generate_sets(
         random_user = random.choice(generate_users)
 
         reps = random.randint(1, 10)
+        weight = round(random.uniform(0, 100), 2)
+        duration = random.randint(0, 300)
         date = datetime.now().date().isoformat()
         exercise_id = random_exercise.id
         workout_id = random_workout.id
         user_id = random_user.id
 
-        response = client.post("/Set", json={"reps": reps, "date": date, "exercise_id": exercise_id, "workout_id": workout_id, "user_id": user_id})
+        response = client.post(
+            "/Set",
+            json={
+                "reps": reps,
+                "weight": weight,
+                "duration": duration,
+                "date": date,
+                "exercise_id": exercise_id,
+                "workout_id": workout_id,
+                "user_id": user_id,
+            },
+        )
         assert response.status_code == 200
         created_set = schemas.SetReply(**response.json())
         assert created_set.reps == reps
+        assert created_set.weight == weight
+        assert created_set.duration == duration
         assert created_set.date.isoformat() == date
         assert created_set.exercise.id == exercise_id
         assert created_set.workout.id == workout_id

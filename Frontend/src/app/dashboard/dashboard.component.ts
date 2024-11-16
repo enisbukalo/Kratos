@@ -12,6 +12,8 @@ import { ChartModule } from 'primeng/chart';
 import { ScrollerModule } from 'primeng/scroller';
 import { CommonModule } from '@angular/common';
 import { CardModule } from 'primeng/card';
+import { MaterialModule } from '../material.module';
+import { SidebarComponent } from '../sidebar/sidebar.component';
 
 @Component({
   selector: 'app-home',
@@ -26,7 +28,9 @@ import { CardModule } from 'primeng/card';
     SidebarModule,
     PanelModule,
     DividerModule,
-    CardModule
+    CardModule,
+    MaterialModule,
+    SidebarComponent
   ],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.scss',
@@ -43,6 +47,7 @@ export class DashboardComponent {
   options: any;
   workoutOptions: any;
   workouts: Workout[] = [];
+  weightChart: any;
 
   constructor(private apiService: KratosServiceService) {
     this.currentUser = JSON.parse(this.cookieService.get('currentUser'));
@@ -68,6 +73,27 @@ export class DashboardComponent {
         position: 'bottom'
       }
     }
+
+    this.weightChart = {
+      type: 'line',
+      data: {
+        labels: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'],
+        datasets: [
+          {
+            label: 'Test Weight',
+            data: [298, 296, 295, 295, 294.8, 293, 291],
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        scales: {
+          y: {
+            beginAtZero: false
+          }
+        }
+      }
+    };
   }
 
   ngOnInit(): void {
@@ -83,4 +109,8 @@ export class DashboardComponent {
   goToProfile(): void { }
 
   goToWorkouts(): void { }
+
+  goToWorkout(workout: WorkoutReply): void {
+    this.router.navigate(['workout', workout.id]);
+  }
 }
