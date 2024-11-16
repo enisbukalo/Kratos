@@ -5,7 +5,7 @@ import { WorkoutComponent } from './workout/workout.component';
 
 export const routes: Routes = [
     {
-        path: 'home',
+        path: 'dashboard',
         component: DashboardComponent,
     },
     {

@@ -21,6 +21,10 @@ export class UserStateService {
         }
     }
 
+    setCurrentUser(user: UserReply) {
+        this.currentUser.next(user);
+    }
+
     refreshUserData() {
         const currentUserValue = this.currentUser.value;
         if (currentUserValue?.id) {

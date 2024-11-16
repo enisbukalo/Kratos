@@ -10,6 +10,7 @@ import { NewSetDialogComponent } from '../new-set-dialog/new-set-dialog.componen
 import { MatIconModule } from '@angular/material/icon';
 import { UserStateService } from '../services/user-state.service';
 import { MatExpansionModule } from '@angular/material/expansion';
+import { DescriptionDialogComponent } from '../description-dialog/description-dialog.component';
 
 interface GroupedSets {
   [exerciseName: string]: Set[];
@@ -44,13 +45,13 @@ export class WorkoutComponent implements OnInit {
   ) { }
 
   goBack(): void {
-    this.router.navigate(['/home']).then(() => {
+    this.router.navigate(['/dashboard']).then(() => {
       this.userState.refreshUserData();
     });
   }
 
   goToDashboard(): void {
-    this.router.navigate(['/home']).then(() => {
+    this.router.navigate(['/dashboard']).then(() => {
       this.userState.refreshUserData();
     });
   }
@@ -101,5 +102,17 @@ export class WorkoutComponent implements OnInit {
         this.groupedSets = this.groupSetsByExercise(this.sets);
       });
     }
+  }
+
+  showDescriptionDialog(event: MouseEvent, description: string | undefined): void {
+    event.stopPropagation();
+    if (!description) {
+      description = 'No description available';
+    }
+    this.dialog.open(DescriptionDialogComponent, {
+      data: { description },
+      width: '400px',
+      panelClass: 'modern-dialog'
+    });
   }
 }

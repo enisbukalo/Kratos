@@ -15,6 +15,7 @@ import { ToastModule } from 'primeng/toast';
 import { MessageModule } from 'primeng/message';
 import { MessagesModule } from 'primeng/messages';
 import { MessageService } from 'primeng/api';
+import { UserStateService } from '../services/user-state.service';
 
 @Component({
   selector: 'app-login',
@@ -38,7 +39,11 @@ export class LoginComponent {
   toastModule = inject(ToastModule);
   router = inject(Router);
 
-  constructor(private apiService: KratosServiceService, private messageService: MessageService) {
+  constructor(
+    private apiService: KratosServiceService,
+    private messageService: MessageService,
+    private userState: UserStateService
+  ) {
     this.currentUser = this.cookieService.get('currentUser');
     this.messageService.clear();
   }
@@ -61,8 +66,8 @@ export class LoginComponent {
 
   selectUser(user: UserReply): void {
     this.cookieService.set('currentUser', JSON.stringify(user));
-    console.log("User Selected: \n" + this.cookieService.get('currentUser'));
-    this.router.navigate(['home']);
+    this.userState.setCurrentUser(user);
+    this.router.navigate(['dashboard']);
   }
 
   createUser(name: string, height: number, weight: number): void {
@@ -90,5 +95,11 @@ export class LoginComponent {
 
   hideMessages() {
     this.messageService.clear();
+  }
+
+  handleLoginSuccess(): void {
+    this.router.navigate(['/dashboard']).then(() => {
+      // Any additional logic after navigation
+    });
   }
 }

@@ -179,6 +179,34 @@
             outline: none !important;
         }
     }
+
+    mat-card-header {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        padding: 16px;
+
+        .card-header-icon {
+            position: absolute;
+            left: 16px;
+            color: var(--accent-2);
+            font-size: 28px;
+            width: 28px;
+            height: 28px;
+        }
+
+        .mat-mdc-card-header-text {
+            flex: none;
+            margin: 0;
+            text-align: center;
+        }
+
+        .mat-mdc-card-title {
+            margin: 0;
+            text-align: center;
+        }
+    }
 }
 
 .dashboard-container {
@@ -466,8 +494,8 @@
 
     &:hover {
         background: linear-gradient(145deg, var(--accent-2), var(--accent-1));
-        transform: translateX(4px);
-        color: var(--text-primary) !important;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(109, 40, 217, 0.2);
     }
 }
 
@@ -514,4 +542,17 @@
             margin: 0;
         }
     }
+}
+
+mat-list-item {
+    height: auto !important;
+    padding: 4px 0;
+}
+
+.card-header-icon {
+    color: var(--accent-2);
+    margin-right: 12px;
+    font-size: 28px;
+    width: 28px;
+    height: 28px;
 }

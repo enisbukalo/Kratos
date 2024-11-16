@@ -1,5 +1,5 @@
 <app-sidebar #sidebar [isOpen]="sidebarVisible" (dashboardClick)="goToDashboard()" (profileClick)="goToProfile()"
-    (workoutsClick)="goToWorkouts()" (loginClick)="goToLogin()">
+    (loginClick)="goToLogin()">
 
     <mat-toolbar class="modern-toolbar">
         <button mat-icon-button (click)="sidebar.toggle()">
@@ -24,8 +24,12 @@
                                 {{exercise.key}}
                             </mat-panel-title>
                             <mat-panel-description>
-                                <span class="exercise-description">{{exercise.value[0].exercise?.description}}</span>
                                 <span class="sets-count">{{exercise.value.length}} sets</span>
+                                <button mat-icon-button
+                                    (click)="showDescriptionDialog($event, exercise.value[0].exercise?.description)"
+                                    matTooltip="View Description">
+                                    <mat-icon class="info-icon">info</mat-icon>
+                                </button>
                             </mat-panel-description>
                         </mat-expansion-panel-header>
 

@@ -1,5 +1,5 @@
 <app-sidebar #sidebar [isOpen]="sidebarVisible" (dashboardClick)="goToDashboard()" (profileClick)="goToProfile()"
-    (workoutsClick)="goToWorkouts()" (loginClick)="goToLogin()">
+    (loginClick)="goToLogin()">
 
     <mat-toolbar class="modern-toolbar">
         <button mat-icon-button (click)="sidebar.toggle()">
@@ -13,6 +13,7 @@
             <!-- Weight Chart -->
             <mat-card appearance="outlined">
                 <mat-card-header>
+                    <mat-icon class="card-header-icon">monitor_weight</mat-icon>
                     <mat-card-title>Weight</mat-card-title>
                 </mat-card-header>
                 <mat-card-content>
@@ -25,6 +26,7 @@
             <!-- Workouts -->
             <mat-card appearance="outlined">
                 <mat-card-header>
+                    <mat-icon class="card-header-icon">fitness_center</mat-icon>
                     <mat-card-title>Workouts</mat-card-title>
                 </mat-card-header>
                 <mat-card-content>
@@ -47,6 +49,7 @@
             <!-- Exercises -->
             <mat-card appearance="outlined">
                 <mat-card-header>
+                    <mat-icon class="card-header-icon">sports_gymnastics</mat-icon>
                     <mat-card-title>Exercises</mat-card-title>
                 </mat-card-header>
                 <mat-card-content>

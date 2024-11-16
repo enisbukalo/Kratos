@@ -1,16 +1,10 @@
 <mat-sidenav-container>
     <mat-sidenav #sidenav mode="over" [opened]="isOpen" class="modern-sidenav">
         <mat-nav-list>
-            <a mat-list-item (click)="dashboardClick.emit()">
+            <button mat-button class="nav-button" (click)="onDashboardClick()">
                 <mat-icon>dashboard</mat-icon>
                 <span>Dashboard</span>
-            </a>
-            <mat-divider></mat-divider>
-
-            <a mat-list-item (click)="workoutsClick.emit()">
-                <mat-icon>fitness_center</mat-icon>
-                <span>Workouts</span>
-            </a>
+            </button>
             <mat-divider></mat-divider>
 
             <a mat-list-item (click)="profileClick.emit()">

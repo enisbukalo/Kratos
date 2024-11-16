@@ -16,7 +16,7 @@ import { NewWorkoutDialogComponent } from '../new-workout-dialog/new-workout-dia
 import { UserStateService } from '../services/user-state.service';
 
 @Component({
-  selector: 'app-home',
+  selector: 'app-dashboard',
   standalone: true,
   imports: [
     CommonModule,
@@ -49,13 +49,14 @@ export class DashboardComponent {
 
   constructor(
     private apiService: KratosServiceService,
-    private userState: UserStateService
+    private userState: UserStateService,
   ) {
     this.currentUser = JSON.parse(this.cookieService.get('currentUser'));
     this.currentUsersWorkouts = this.currentUser?.workouts || [];
-    this.currentUsersExercises = this.currentUser?.workouts
+    const allSets = this.currentUser?.workouts
       ? this.currentUser.workouts.flatMap(workout => workout.sets || [])
       : [];
+    this.currentUsersExercises = this.getUniqueExercises(allSets);
     console.log("Current Exercises: ", this.currentUsersExercises);
 
     this.data = {
@@ -102,14 +103,17 @@ export class DashboardComponent {
       if (user) {
         this.currentUser = user;
         this.currentUsersWorkouts = user.workouts || [];
-        this.currentUsersExercises = user.workouts
+        const allSets = user.workouts
           ? user.workouts.flatMap(workout => workout.sets || [])
           : [];
+        this.currentUsersExercises = this.getUniqueExercises(allSets);
       }
     });
   }
 
-  goToDashboard(): void { }
+  goToDashboard(): void {
+    this.router.navigate(['/dashboard']);
+  }
 
   goToLogin(): void {
     this.router.navigate(['login']);
@@ -117,7 +121,9 @@ export class DashboardComponent {
 
   goToProfile(): void { }
 
-  goToWorkouts(): void { }
+  goToWorkouts(): void {
+    this.router.navigate(['/workouts']);
+  }
 
   goToWorkout(workout: WorkoutReply): void {
     this.router.navigate(['workout', workout.id]);
@@ -144,9 +150,10 @@ export class DashboardComponent {
           this.currentUser = user;
           this.cookieService.set('currentUser', JSON.stringify(user));
           this.currentUsersWorkouts = user.workouts || [];
-          this.currentUsersExercises = user.workouts
+          const allSets = user.workouts
             ? user.workouts.flatMap(workout => workout.sets || [])
             : [];
+          this.currentUsersExercises = this.getUniqueExercises(allSets);
         });
       }
     }
@@ -154,16 +161,13 @@ export class DashboardComponent {
 
   private getUniqueExercises(sets: Set[]): Set[] {
     const uniqueExercises = new Map<number, Set>();
-
     sets.forEach(set => {
       if (set.exercise?.id) {
-        // Only store one set per unique exercise ID
         if (!uniqueExercises.has(set.exercise.id)) {
           uniqueExercises.set(set.exercise.id, set);
         }
       }
     });
-
     return Array.from(uniqueExercises.values());
   }
 }
