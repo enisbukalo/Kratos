@@ -67,8 +67,10 @@ export interface CreateUser {
 export type SetBase = {
     id?: number
     reps?: number
+    weight?: number
+    duration?: number
     exercise?: Exercise
-    date?: Date
+    date?: string
 }
 
 export type SetReply = SetBase & {
@@ -81,7 +83,9 @@ export type Set = SetBase & {}
 
 export interface CreateSet {
     reps: number
-    date: Date
+    weight: number
+    duration: number
+    date: string
     exercise_id: number
     workout_id: number
     user_id: number

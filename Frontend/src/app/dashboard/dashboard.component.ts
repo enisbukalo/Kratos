@@ -1,36 +1,33 @@
 import { Component, inject } from '@angular/core';
 import { KratosServiceService } from '../kratos-service.service';
 import { CookieService } from 'ngx-cookie-service';
-import { UserReply, Workout, WorkoutReply, Set } from '../kratos-api-types';
+import { UserReply, WorkoutReply, Workout, Set } from '../kratos-api-types';
 import { ButtonModule } from 'primeng/button';
 import { AvatarModule } from 'primeng/avatar';
 import { SidebarModule } from 'primeng/sidebar';
-import { PanelModule } from 'primeng/panel';
-import { DividerModule } from 'primeng/divider';
 import { Router } from '@angular/router';
 import { ChartModule } from 'primeng/chart';
-import { ScrollerModule } from 'primeng/scroller';
 import { CommonModule } from '@angular/common';
 import { CardModule } from 'primeng/card';
 import { MaterialModule } from '../material.module';
 import { SidebarComponent } from '../sidebar/sidebar.component';
+import { MatDialog } from '@angular/material/dialog';
+import { NewWorkoutDialogComponent } from '../new-workout-dialog/new-workout-dialog.component';
+import { UserStateService } from '../services/user-state.service';
 
 @Component({
   selector: 'app-home',
   standalone: true,
   imports: [
     CommonModule,
-    ScrollerModule,
-    PanelModule,
-    ChartModule,
     ButtonModule,
     AvatarModule,
     SidebarModule,
-    PanelModule,
-    DividerModule,
+    ChartModule,
     CardModule,
     MaterialModule,
-    SidebarComponent
+    SidebarComponent,
+    NewWorkoutDialogComponent
   ],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.scss',
@@ -38,6 +35,7 @@ import { SidebarComponent } from '../sidebar/sidebar.component';
 export class DashboardComponent {
   cookieService = inject(CookieService);
   router = inject(Router);
+  dialog = inject(MatDialog);
 
   currentUser: UserReply;
   currentUsersWorkouts?: WorkoutReply[] = [];
@@ -49,7 +47,10 @@ export class DashboardComponent {
   workouts: Workout[] = [];
   weightChart: any;
 
-  constructor(private apiService: KratosServiceService) {
+  constructor(
+    private apiService: KratosServiceService,
+    private userState: UserStateService
+  ) {
     this.currentUser = JSON.parse(this.cookieService.get('currentUser'));
     this.currentUsersWorkouts = this.currentUser?.workouts || [];
     this.currentUsersExercises = this.currentUser?.workouts
@@ -97,7 +98,15 @@ export class DashboardComponent {
   }
 
   ngOnInit(): void {
-
+    this.userState.currentUser$.subscribe(user => {
+      if (user) {
+        this.currentUser = user;
+        this.currentUsersWorkouts = user.workouts || [];
+        this.currentUsersExercises = user.workouts
+          ? user.workouts.flatMap(workout => workout.sets || [])
+          : [];
+      }
+    });
   }
 
   goToDashboard(): void { }
@@ -112,5 +121,34 @@ export class DashboardComponent {
 
   goToWorkout(workout: WorkoutReply): void {
     this.router.navigate(['workout', workout.id]);
+  }
+
+  openNewWorkoutDialog(): void {
+    const dialogRef = this.dialog.open(NewWorkoutDialogComponent, {
+      width: '500px'
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.currentUsersWorkouts = [...this.currentUsersWorkouts!, result];
+      }
+    });
+  }
+
+  refreshData(): void {
+    const currentUserString = this.cookieService.get('currentUser');
+    if (currentUserString) {
+      const parsedUser = JSON.parse(currentUserString);
+      if (parsedUser?.id) {
+        this.apiService.getUser(parsedUser.id).subscribe(user => {
+          this.currentUser = user;
+          this.cookieService.set('currentUser', JSON.stringify(user));
+          this.currentUsersWorkouts = user.workouts || [];
+          this.currentUsersExercises = user.workouts
+            ? user.workouts.flatMap(workout => workout.sets || [])
+            : [];
+        });
+      }
+    }
   }
 }

@@ -39,13 +39,38 @@
     align-items: center;
     width: 100%;
     padding: 0.5rem;
+    background: var(--surface-2);
+    border-radius: 8px;
+    margin: 0.5rem 0;
 
     .exercise-name {
         color: var(--text-primary);
         font-weight: 500;
+        font-size: 1rem;
     }
 
     .set-details {
-        color: var(--text-secondary);
+        display: flex;
+        gap: 1rem;
+        align-items: center;
+
+        .detail-item {
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+
+            .detail-icon {
+                font-size: 1rem;
+                width: 1rem;
+                height: 1rem;
+                opacity: 0.7;
+            }
+        }
+    }
+
+    &:hover {
+        background: var(--hover-bg);
     }
 }

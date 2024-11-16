@@ -21,4 +21,12 @@ DEFAULT_EXERCISES = [
     "Dip",
     "Lunge",
     "Plank",
+    "Run",
+    "Bike",
+    "Swim",
+    "Walk",
+    "Crunches",
+    "Sit Ups",
+    "Mountain Climbers",
+    "Burpees",
 ]

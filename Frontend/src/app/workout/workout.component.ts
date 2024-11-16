@@ -5,11 +5,15 @@ import { MaterialModule } from '../material.module';
 import { KratosServiceService } from '../kratos-service.service';
 import { WorkoutReply, Set } from '../kratos-api-types';
 import { SidebarComponent } from '../sidebar/sidebar.component';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { NewSetDialogComponent } from '../new-set-dialog/new-set-dialog.component';
+import { MatIconModule } from '@angular/material/icon';
+import { UserStateService } from '../services/user-state.service';
 
 @Component({
   selector: 'app-workout',
   standalone: true,
-  imports: [CommonModule, MaterialModule, SidebarComponent],
+  imports: [CommonModule, MaterialModule, SidebarComponent, MatDialogModule, MatIconModule],
   templateUrl: './workout.component.html',
   styleUrl: './workout.component.scss'
 })
@@ -21,15 +25,21 @@ export class WorkoutComponent implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private router: Router,
-    private apiService: KratosServiceService
+    private apiService: KratosServiceService,
+    private dialog: MatDialog,
+    private userState: UserStateService
   ) { }
 
   goBack(): void {
-    this.router.navigate(['/home']);
+    this.router.navigate(['/home']).then(() => {
+      this.userState.refreshUserData();
+    });
   }
 
   goToDashboard(): void {
-    this.router.navigate(['/home']);
+    this.router.navigate(['/home']).then(() => {
+      this.userState.refreshUserData();
+    });
   }
 
   goToLogin(): void {
@@ -39,6 +49,23 @@ export class WorkoutComponent implements OnInit {
   goToProfile(): void { }
 
   goToWorkouts(): void { }
+
+  openNewSetDialog(): void {
+    if (!this.workout?.id) {
+      return;
+    }
+
+    const dialogRef = this.dialog.open(NewSetDialogComponent, {
+      width: '500px',
+      data: { workoutId: this.workout.id }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.sets = [...this.sets, result];
+      }
+    });
+  }
 
   ngOnInit() {
     const workoutId = Number(this.route.snapshot.paramMap.get('id'));

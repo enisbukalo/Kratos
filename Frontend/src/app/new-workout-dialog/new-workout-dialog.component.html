@@ -1,0 +1,15 @@
+<h2 mat-dialog-title>Create New Workout</h2>
+<mat-dialog-content>
+    <form #workoutForm="ngForm">
+        <mat-form-field appearance="fill" class="full-width">
+            <mat-label>Workout Name</mat-label>
+            <input matInput [(ngModel)]="workoutName" name="name" required>
+        </mat-form-field>
+    </form>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+    <button mat-button (click)="onCancel()">Cancel</button>
+    <button mat-raised-button color="primary" (click)="onSubmit()" [disabled]="!workoutForm.form.valid">
+        Create Workout
+    </button>
+</mat-dialog-actions>

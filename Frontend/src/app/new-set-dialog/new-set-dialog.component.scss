@@ -1,0 +1,32 @@
+:host {
+    display: block;
+    padding: 24px;
+    background: var(--surface-2);
+    color: var(--text-primary);
+}
+
+.full-width {
+    width: 100%;
+    margin-bottom: 1rem;
+}
+
+.third-width {
+    width: 31%;
+    margin-right: 2%;
+}
+
+mat-dialog-content {
+    margin: 1rem 0;
+}
+
+:host ::ng-deep {
+    .mat-mdc-form-field {
+        .mat-mdc-text-field-wrapper {
+            background: var(--surface-3);
+        }
+
+        .mat-mdc-form-field-label {
+            color: var(--text-secondary);
+        }
+    }
+}

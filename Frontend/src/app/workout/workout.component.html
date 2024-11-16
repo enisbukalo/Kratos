@@ -22,12 +22,29 @@
                         <div class="set-item">
                             <span class="exercise-name">{{set.exercise?.name}}</span>
                             <div class="set-details">
-                                <span>{{set.reps}} reps</span>
+                                <span class="detail-item" *ngIf="set.weight">
+                                    <mat-icon class="detail-icon">fitness_center</mat-icon>
+                                    {{set.weight}} lbs
+                                </span>
+                                <span class="detail-item" *ngIf="set.reps">
+                                    <mat-icon class="detail-icon">repeat</mat-icon>
+                                    {{set.reps}} reps
+                                </span>
+                                <span class="detail-item" *ngIf="set.duration">
+                                    <mat-icon class="detail-icon">timer</mat-icon>
+                                    {{set.duration}}s
+                                </span>
                             </div>
                         </div>
                     </mat-list-item>
                 </mat-list>
             </mat-card-content>
+            <mat-card-actions>
+                <button mat-raised-button color="primary" (click)="openNewSetDialog()">
+                    <mat-icon>add</mat-icon>
+                    Add New Set
+                </button>
+            </mat-card-actions>
         </mat-card>
     </div>
 </app-sidebar>
