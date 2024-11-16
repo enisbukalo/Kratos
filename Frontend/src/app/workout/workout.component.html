@@ -14,30 +14,41 @@
     <div class="workout-content">
         <mat-card appearance="outlined">
             <mat-card-header>
-                <mat-card-title>Sets</mat-card-title>
+                <mat-card-title>Exercises</mat-card-title>
             </mat-card-header>
             <mat-card-content>
-                <mat-list>
-                    <mat-list-item *ngFor="let set of sets">
-                        <div class="set-item">
-                            <span class="exercise-name">{{set.exercise?.name}}</span>
-                            <div class="set-details">
-                                <span class="detail-item" *ngIf="set.weight">
-                                    <mat-icon class="detail-icon">fitness_center</mat-icon>
-                                    {{set.weight}} lbs
-                                </span>
-                                <span class="detail-item" *ngIf="set.reps">
-                                    <mat-icon class="detail-icon">repeat</mat-icon>
-                                    {{set.reps}} reps
-                                </span>
-                                <span class="detail-item" *ngIf="set.duration">
-                                    <mat-icon class="detail-icon">timer</mat-icon>
-                                    {{set.duration}}s
-                                </span>
-                            </div>
-                        </div>
-                    </mat-list-item>
-                </mat-list>
+                <mat-accordion>
+                    <mat-expansion-panel *ngFor="let exercise of groupedSets | keyvalue">
+                        <mat-expansion-panel-header>
+                            <mat-panel-title>
+                                {{exercise.key}}
+                            </mat-panel-title>
+                            <mat-panel-description>
+                                <span class="exercise-description">{{exercise.value[0].exercise?.description}}</span>
+                                <span class="sets-count">{{exercise.value.length}} sets</span>
+                            </mat-panel-description>
+                        </mat-expansion-panel-header>
+
+                        <mat-list>
+                            <mat-list-item *ngFor="let set of exercise.value">
+                                <div class="set-details">
+                                    <span class="detail-item" *ngIf="set.weight">
+                                        <mat-icon class="detail-icon">fitness_center</mat-icon>
+                                        {{set.weight}} lbs
+                                    </span>
+                                    <span class="detail-item" *ngIf="set.reps">
+                                        <mat-icon class="detail-icon">repeat</mat-icon>
+                                        {{set.reps}} reps
+                                    </span>
+                                    <span class="detail-item" *ngIf="set.duration">
+                                        <mat-icon class="detail-icon">timer</mat-icon>
+                                        {{set.duration}}s
+                                    </span>
+                                </div>
+                            </mat-list-item>
+                        </mat-list>
+                    </mat-expansion-panel>
+                </mat-accordion>
             </mat-card-content>
             <mat-card-actions>
                 <button mat-raised-button color="primary" (click)="openNewSetDialog()">

@@ -74,3 +74,50 @@
         background: var(--hover-bg);
     }
 }
+
+.mat-expansion-panel {
+    background: var(--surface-2);
+    margin-bottom: 0.5rem;
+    border: 1px solid rgba(255, 255, 255, 0.03);
+
+    .mat-expansion-panel-header {
+        .mat-expansion-panel-header-title {
+            color: var(--text-primary);
+            font-weight: 500;
+        }
+
+        .mat-expansion-panel-header-description {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1rem;
+
+            .exercise-description {
+                color: var(--text-secondary);
+                font-size: 0.875rem;
+                opacity: 0.8;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+
+            .sets-count {
+                white-space: nowrap;
+            }
+        }
+    }
+}
+
+.set-details {
+    display: flex;
+    gap: 1rem;
+    padding: 0.5rem;
+
+    .detail-item {
+        display: flex;
+        align-items: center;
+        gap: 0.25rem;
+        color: var(--text-secondary);
+        font-size: 0.875rem;
+    }
+}

@@ -30,3 +30,36 @@ mat-dialog-content {
         }
     }
 }
+
+.set-container {
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 8px;
+    padding: 16px;
+    margin-bottom: 16px;
+}
+
+.set-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+
+    h3 {
+        margin: 0;
+        color: var(--text-primary);
+    }
+}
+
+.set-inputs {
+    display: flex;
+    gap: 16px;
+}
+
+.third-width {
+    width: calc(33.33% - 11px);
+}
+
+.full-width {
+    width: 100%;
+    margin-bottom: 16px;
+}

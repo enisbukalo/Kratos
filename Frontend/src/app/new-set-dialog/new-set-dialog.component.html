@@ -1,4 +1,4 @@
-<h2 mat-dialog-title>Add New Set</h2>
+<h2 mat-dialog-title>Add Sets</h2>
 <mat-dialog-content>
     <form #setForm="ngForm">
         <mat-form-field appearance="fill" class="full-width">
@@ -11,26 +11,42 @@
         </mat-form-field>
 
         <div *ngIf="selectedExercise">
-            <mat-form-field class="third-width">
-                <mat-label>Reps</mat-label>
-                <input matInput type="number" [(ngModel)]="newSet.reps" name="reps" required min="0">
-            </mat-form-field>
+            <div *ngFor="let set of sets; let i = index" class="set-container">
+                <div class="set-header">
+                    <h3>Set {{i + 1}}</h3>
+                    <button mat-icon-button color="warn" (click)="removeSet(i)" *ngIf="sets.length > 1">
+                        <mat-icon>delete</mat-icon>
+                    </button>
+                </div>
 
-            <mat-form-field class="third-width">
-                <mat-label>Weight (lbs)</mat-label>
-                <input matInput type="number" [(ngModel)]="newSet.weight" name="weight" required min="0">
-            </mat-form-field>
+                <div class="set-inputs">
+                    <mat-form-field class="third-width">
+                        <mat-label>Reps</mat-label>
+                        <input matInput type="number" [(ngModel)]="set.reps" [name]="'reps' + i" required min="0">
+                    </mat-form-field>
 
-            <mat-form-field class="third-width">
-                <mat-label>Duration (seconds)</mat-label>
-                <input matInput type="number" [(ngModel)]="newSet.duration" name="duration" min="0">
-            </mat-form-field>
+                    <mat-form-field class="third-width">
+                        <mat-label>Weight (lbs)</mat-label>
+                        <input matInput type="number" [(ngModel)]="set.weight" [name]="'weight' + i" required min="0">
+                    </mat-form-field>
+
+                    <mat-form-field class="third-width">
+                        <mat-label>Duration (seconds)</mat-label>
+                        <input matInput type="number" [(ngModel)]="set.duration" [name]="'duration' + i" min="0">
+                    </mat-form-field>
+                </div>
+            </div>
+
+            <button mat-stroked-button color="primary" (click)="addSet()" type="button">
+                <mat-icon>add</mat-icon>
+                Add Another Set
+            </button>
         </div>
     </form>
 </mat-dialog-content>
 <mat-dialog-actions align="end">
     <button mat-button (click)="onCancel()">Cancel</button>
     <button mat-raised-button color="primary" (click)="onSubmit()" [disabled]="!setForm.form.valid">
-        Add Set
+        Add Sets
     </button>
 </mat-dialog-actions>

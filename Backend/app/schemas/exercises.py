@@ -10,6 +10,7 @@ Base.metadata.create_all(bind=engine)
 class ExerciseBase(BaseModel):
     id: int
     name: str
+    description: str
 
 
 class Exercise(ExerciseBase):
@@ -18,6 +19,7 @@ class Exercise(ExerciseBase):
 
 class CreateExercise(BaseModel):
     name: str = Field(default="Exercise Name", min_length=4, max_length=100)
+    description: str = Field(default="Exercise Description", min_length=4, max_length=500)
 
 
 class ExerciseQuery(GetQueryParams):

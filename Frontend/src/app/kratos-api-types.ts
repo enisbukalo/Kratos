@@ -15,6 +15,7 @@ export type SetQueryParams = GetQueryParams & {}
 export type ExerciseBase = {
     id?: number
     name?: string
+    description?: string
 }
 
 export type Exercise = ExerciseBase & {}

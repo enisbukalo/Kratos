@@ -11,6 +11,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatIconModule } from '@angular/material/icon';
 import { CookieService } from 'ngx-cookie-service';
+import { forkJoin } from 'rxjs';
 
 @Component({
   selector: 'app-new-set-dialog',
@@ -31,15 +32,7 @@ import { CookieService } from 'ngx-cookie-service';
 export class NewSetDialogComponent {
   exercises: Exercise[] = [];
   selectedExercise?: Exercise;
-  newSet: CreateSet = {
-    reps: 0,
-    weight: 0,
-    duration: 0,
-    date: new Date().toISOString().split('T')[0],
-    exercise_id: 0,
-    workout_id: 0,
-    user_id: 0
-  };
+  sets: CreateSet[] = [this.createEmptySet()];
   currentUser: any;
 
   constructor(
@@ -52,43 +45,62 @@ export class NewSetDialogComponent {
     this.currentUser = JSON.parse(this.cookieService.get('currentUser'));
   }
 
-  loadExercises() {
-    this.apiService.getExercises({}).subscribe(exercises => {
-      this.exercises = exercises;
-    });
+  private createEmptySet(): CreateSet {
+    return {
+      reps: 0,
+      weight: 0,
+      duration: 0,
+      date: new Date().toISOString().split('T')[0],
+      exercise_id: 0,
+      workout_id: 0,
+      user_id: 0
+    };
   }
 
-  onExerciseSelect() {
-    if (this.selectedExercise) {
-      this.newSet.duration = 0;
-      this.newSet.reps = 0;
-      this.newSet.weight = 0;
-    }
+  addSet() {
+    this.sets.push(this.createEmptySet());
+  }
+
+  removeSet(index: number) {
+    this.sets.splice(index, 1);
   }
 
   onSubmit() {
     if (this.selectedExercise?.id) {
-      const today = new Date().toISOString().split('T')[0]; // Gets just the date part: YYYY-MM-DD
+      const today = new Date().toISOString().split('T')[0];
 
-      const set: CreateSet = {
-        exercise_id: this.selectedExercise.id,
+      const setsToCreate = this.sets.map(set => ({
+        exercise_id: this.selectedExercise!.id,
         workout_id: this.data.workoutId,
         user_id: this.currentUser.id,
-        reps: this.newSet.reps ?? 0,
-        weight: this.newSet.weight ?? 0,
-        duration: this.newSet.duration ?? 0,
+        reps: set.reps ?? 0,
+        weight: set.weight ?? 0,
+        duration: set.duration ?? 0,
         date: today
-      };
+      }));
 
-      this.apiService.createSet(set).subscribe(
-        (response) => {
-          this.dialogRef.close(response);
-        }
+      const createSetObservables = setsToCreate.map(set =>
+        this.apiService.createSet(set)
       );
+
+      forkJoin(createSetObservables).subscribe({
+        next: (responses) => {
+          this.dialogRef.close(responses);
+        },
+        error: (error) => {
+          console.error('Error creating sets:', error);
+        }
+      });
     }
   }
 
   onCancel() {
     this.dialogRef.close();
+  }
+
+  loadExercises() {
+    this.apiService.getExercises({}).subscribe(exercises => {
+      this.exercises = exercises;
+    });
   }
 }

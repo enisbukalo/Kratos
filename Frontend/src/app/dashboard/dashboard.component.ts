@@ -151,4 +151,19 @@ export class DashboardComponent {
       }
     }
   }
+
+  private getUniqueExercises(sets: Set[]): Set[] {
+    const uniqueExercises = new Map<number, Set>();
+
+    sets.forEach(set => {
+      if (set.exercise?.id) {
+        // Only store one set per unique exercise ID
+        if (!uniqueExercises.has(set.exercise.id)) {
+          uniqueExercises.set(set.exercise.id, set);
+        }
+      }
+    });
+
+    return Array.from(uniqueExercises.values());
+  }
 }

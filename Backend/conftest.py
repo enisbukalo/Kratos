@@ -80,10 +80,12 @@ def generate_exercises(client: TestClient) -> list[schemas.Exercise]:
 
     for _ in range(10):
         exercise_name = "".join(random.choices(string.ascii_uppercase, k=SKELETON_NAME_LENGTH))
-        response = client.post("/Exercise", json={"name": exercise_name})
+        exercise_description = "".join(random.choices(string.ascii_uppercase, k=SKELETON_NAME_LENGTH * 2))
+        response = client.post("/Exercise", json={"name": exercise_name, "description": exercise_description})
         assert response.status_code == 200
         exercise = schemas.Exercise(**response.json())
         assert exercise.name == exercise_name
+        assert exercise.description == exercise_description
         to_return.append(exercise)
 
     return to_return

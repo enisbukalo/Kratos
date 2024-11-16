@@ -9,11 +9,23 @@ import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { NewSetDialogComponent } from '../new-set-dialog/new-set-dialog.component';
 import { MatIconModule } from '@angular/material/icon';
 import { UserStateService } from '../services/user-state.service';
+import { MatExpansionModule } from '@angular/material/expansion';
+
+interface GroupedSets {
+  [exerciseName: string]: Set[];
+}
 
 @Component({
   selector: 'app-workout',
   standalone: true,
-  imports: [CommonModule, MaterialModule, SidebarComponent, MatDialogModule, MatIconModule],
+  imports: [
+    CommonModule,
+    MaterialModule,
+    SidebarComponent,
+    MatDialogModule,
+    MatIconModule,
+    MatExpansionModule
+  ],
   templateUrl: './workout.component.html',
   styleUrl: './workout.component.scss'
 })
@@ -21,6 +33,7 @@ export class WorkoutComponent implements OnInit {
   workout?: WorkoutReply;
   sets: Set[] = [];
   sidebarVisible: boolean = false;
+  groupedSets: GroupedSets = {};
 
   constructor(
     private route: ActivatedRoute,
@@ -60,11 +73,23 @@ export class WorkoutComponent implements OnInit {
       data: { workoutId: this.workout.id }
     });
 
-    dialogRef.afterClosed().subscribe(result => {
-      if (result) {
-        this.sets = [...this.sets, result];
+    dialogRef.afterClosed().subscribe(results => {
+      if (results) {
+        this.sets = [...this.sets, ...results];
+        this.groupedSets = this.groupSetsByExercise(this.sets);
       }
     });
+  }
+
+  private groupSetsByExercise(sets: Set[]): GroupedSets {
+    return sets.reduce((groups: GroupedSets, set) => {
+      const exerciseName = set.exercise?.name || 'Unknown Exercise';
+      if (!groups[exerciseName]) {
+        groups[exerciseName] = [];
+      }
+      groups[exerciseName].push(set);
+      return groups;
+    }, {});
   }
 
   ngOnInit() {
@@ -73,6 +98,7 @@ export class WorkoutComponent implements OnInit {
       this.apiService.getWorkout(workoutId).subscribe(workout => {
         this.workout = workout;
         this.sets = workout.sets || [];
+        this.groupedSets = this.groupSetsByExercise(this.sets);
       });
     }
   }

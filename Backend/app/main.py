@@ -12,8 +12,8 @@ def initialize_exercises(db: Session):
     existing_exercises = db.query(Exercise).first()
     if existing_exercises is None:
         # Add default exercises
-        for exercise_name in DEFAULT_EXERCISES:
-            db.add(Exercise(name=exercise_name))
+        for exercise in DEFAULT_EXERCISES:
+            db.add(Exercise(**exercise))
         db.commit()
 
 
