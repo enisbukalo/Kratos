@@ -41,15 +41,27 @@ def test_delete_sets(client: TestClient, generate_sets: list[schemas.SetReply]):
 def test_update_sets(client: TestClient, generate_sets: list[schemas.SetReply]):
     for set in generate_sets:
         new_reps = random.randint(1, 100)
+        new_weight = round(random.uniform(0, 100), 2)
+        new_duration = random.randint(0, 300)
         new_date = (datetime.now() + timedelta(days=random.randint(-5, 5))).date().isoformat()
 
         response = client.put(
             f"/Set/{set.id}",
-            json={"reps": new_reps, "date": new_date, "exercise_id": set.exercise.id, "workout_id": set.workout.id, "user_id": set.user.id},
+            json={
+                "reps": new_reps,
+                "weight": new_weight,
+                "duration": new_duration,
+                "date": new_date,
+                "exercise_id": set.exercise.id,
+                "workout_id": set.workout.id,
+                "user_id": set.user.id,
+            },
         )
         assert response.status_code == 200
 
         new_set = schemas.ExerciseSet(**response.json())
         assert new_set.id == set.id
         assert new_set.reps == new_reps
+        assert new_set.weight == new_weight
+        assert new_set.duration == new_duration
         assert new_set.date.isoformat() == new_date

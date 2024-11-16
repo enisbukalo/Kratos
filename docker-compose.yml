@@ -22,9 +22,10 @@ services:
       context: .
       dockerfile: Dockerfile_Frontend
     image: kratos_frontend_image
-    working_dir: /usr/src/app
-    # volumes:
-    #   - ./Frontend:/usr/src/app
+    working_dir: /Frontend
+    volumes:
+      - ./Frontend:/Frontend
+      - /Frontend/node_modules
     ports:
       - 3030:3030
     environment:

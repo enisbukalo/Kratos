@@ -39,8 +39,10 @@ def test_delete_exercises(client: TestClient, generate_exercises: list[schemas.E
 def test_update_exercises(client: TestClient, generate_exercises: list[schemas.Exercise]):
     for exercise in generate_exercises:
         new_name = "".join(random.choices(string.ascii_uppercase, k=STRING_LENGTH))
-        response = client.put(f"/Exercise/{exercise.id}", json={"name": new_name})
+        new_description = "".join(random.choices(string.ascii_uppercase, k=STRING_LENGTH * 2))
+        response = client.put(f"/Exercise/{exercise.id}", json={"name": new_name, "description": new_description})
         assert response.status_code == 200
 
         new_exercise = schemas.Exercise(**response.json())
         assert new_exercise.name == new_name
+        assert new_exercise.description == new_description

@@ -1,0 +1,27 @@
+@use '@angular/material' as mat;
+
+html,
+body {
+    height: 100%;
+    margin: 0;
+    background: #13111C;
+}
+
+body {
+    margin: 0;
+    font-family: Roboto, "Helvetica Neue", sans-serif;
+    color: #F8FAFC;
+}
+
+// Global Material overrides
+.mat-mdc-card {
+    --mdc-elevated-card-container-color: #17151F;
+}
+
+.mat-toolbar {
+    --mat-toolbar-container-background-color: #1C1A23;
+}
+
+.mat-drawer {
+    --mat-sidenav-container-background-color: #13111C;
+}

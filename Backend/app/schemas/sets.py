@@ -1,4 +1,4 @@
-from pydantic import BaseModel, ConfigDict, Field, PositiveInt
+from pydantic import BaseModel, ConfigDict, Field, PositiveInt, PositiveFloat
 from datetime import date as _date
 
 from app.database import Base, engine
@@ -12,6 +12,8 @@ Base.metadata.create_all(bind=engine)
 class SetBase(BaseModel):
     id: int
     reps: int
+    weight: float
+    duration: int  # Duration in seconds
     date: _date
     exercise: "Exercise"
 
@@ -19,6 +21,8 @@ class SetBase(BaseModel):
 class SetReply(BaseModel):
     id: int
     reps: int
+    weight: float
+    duration: int  # Duration in seconds
     date: _date
     workout: "Workout"
     exercise: "Exercise"
@@ -30,7 +34,9 @@ class ExerciseSet(SetBase):
 
 
 class CreateSet(BaseModel):
-    reps: int = Field(default=5, gt=0)
+    reps: int = Field(default=5, ge=0)
+    weight: float = Field(default=0.0, ge=0.0)
+    duration: int = Field(default=0, ge=0)  # Duration in seconds
     date: _date = Field(default=_date.today())
     exercise_id: PositiveInt
     workout_id: PositiveInt

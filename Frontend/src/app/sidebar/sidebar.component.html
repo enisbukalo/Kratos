@@ -1,0 +1,27 @@
+<mat-sidenav-container>
+    <mat-sidenav #sidenav mode="over" [opened]="isOpen" class="modern-sidenav">
+        <mat-nav-list>
+            <button mat-button class="nav-button" (click)="onDashboardClick()">
+                <mat-icon>dashboard</mat-icon>
+                <span>Dashboard</span>
+            </button>
+            <mat-divider></mat-divider>
+
+            <a mat-list-item (click)="profileClick.emit()">
+                <mat-icon>person</mat-icon>
+                <span>Profile</span>
+            </a>
+        </mat-nav-list>
+
+        <div class="sidenav-footer">
+            <mat-divider></mat-divider>
+            <button mat-raised-button color="warn" (click)="loginClick.emit()">
+                <mat-icon>logout</mat-icon>
+                Logout
+            </button>
+        </div>
+    </mat-sidenav>
+    <mat-sidenav-content>
+        <ng-content></ng-content>
+    </mat-sidenav-content>
+</mat-sidenav-container>

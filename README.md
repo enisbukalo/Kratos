@@ -25,3 +25,9 @@ Workout app named after the Greek god of strength, Kratos.
     ```http://127.0.0.1:8080/docs```
 - ### Navigate To Frontend
     ```http://127.0.0.1:3030/```
+
+
+## Notes
+- A User can create a workout.
+- A Workout consists of a collection of Sets of Exercises.
+- A Session is a collection of Sets grouped by Exercise.

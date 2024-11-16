@@ -6,4 +6,4 @@ COPY ./Backend/requirements.txt /code/Backend/requirements.txt
 
 RUN pip install --no-cache-dir --upgrade -r /code/Backend/requirements.txt
 
-ENTRYPOINT ["fastapi", "dev", "/Backend/app/main.py", "--host", "0.0.0.0", "--port", "8080"]
+ENTRYPOINT ["uvicorn", "app.main:app", "--reload", "--host", "0.0.0.0", "--port", "8080"]
