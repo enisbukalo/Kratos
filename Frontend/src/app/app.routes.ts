@@ -5,6 +5,11 @@ import { WorkoutComponent } from './workout/workout.component';
 
 export const routes: Routes = [
     {
+        path: '',
+        redirectTo: 'login',
+        pathMatch: 'full'
+    },
+    {
         path: 'dashboard',
         component: DashboardComponent,
     },
