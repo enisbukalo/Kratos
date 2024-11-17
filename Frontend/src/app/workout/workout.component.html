@@ -65,5 +65,47 @@
                 </button>
             </mat-card-actions>
         </mat-card>
+
+        <mat-card appearance="outlined" *ngIf="isWorkoutMode" class="workout-tracker">
+            <mat-card-header>
+                <mat-card-title>Workout Progress</mat-card-title>
+            </mat-card-header>
+            <mat-card-content>
+                <div *ngFor="let exerciseName of getExerciseNames()" class="exercise-group">
+                    <h3>{{exerciseName}}</h3>
+                    <table mat-table [dataSource]="getSetsForExercise(exerciseName)" class="mat-elevation-z8">
+                        <ng-container matColumnDef="setNumber">
+                            <th mat-header-cell *matHeaderCellDef>Set</th>
+                            <td mat-cell *matCellDef="let i = index">{{i + 1}}</td>
+                        </ng-container>
+
+                        <ng-container matColumnDef="weight">
+                            <th mat-header-cell *matHeaderCellDef>Weight (lbs)</th>
+                            <td mat-cell *matCellDef="let set">
+                                <mat-form-field>
+                                    <input matInput type="number" [(ngModel)]="set.weight">
+                                </mat-form-field>
+                            </td>
+                        </ng-container>
+
+                        <ng-container matColumnDef="reps">
+                            <th mat-header-cell *matHeaderCellDef>Reps</th>
+                            <td mat-cell *matCellDef="let set">
+                                <mat-form-field>
+                                    <input matInput type="number" [(ngModel)]="set.reps">
+                                </mat-form-field>
+                            </td>
+                        </ng-container>
+
+                        <tr mat-header-row *matHeaderRowDef="['setNumber', 'weight', 'reps']"></tr>
+                        <tr mat-row *matRowDef="let row; columns: ['setNumber', 'weight', 'reps'];"></tr>
+                    </table>
+                </div>
+            </mat-card-content>
+            <mat-card-actions>
+                <button mat-raised-button color="primary" (click)="saveWorkout()">Save Progress</button>
+                <button mat-raised-button color="warn" (click)="endWorkout()">End Workout</button>
+            </mat-card-actions>
+        </mat-card>
     </div>
 </app-sidebar>

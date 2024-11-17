@@ -9,7 +9,8 @@ STRING_LENGTH = 15
 
 
 def test_create_workout(client: TestClient, generate_workouts: list[schemas.WorkoutReply]):
-    pass
+    for workout in generate_workouts:
+        assert workout.started_at is not None
 
 
 def test_get_workouts(client: TestClient, generate_workouts: list[schemas.WorkoutReply]):
@@ -18,11 +19,15 @@ def test_get_workouts(client: TestClient, generate_workouts: list[schemas.Workou
     for id in ids:
         response = client.get(f"/Workout/{id}")
         assert response.status_code == 200
-        assert schemas.WorkoutReply(**response.json()) in generate_workouts
+        workout = schemas.WorkoutReply(**response.json())
+        assert workout in generate_workouts
+        assert workout.started_at is not None
 
     response = client.get(f"/Workout?page_size=100&page_number=1")
     for workout in response.json():
-        assert schemas.WorkoutReply(**workout) in generate_workouts
+        workout_obj = schemas.WorkoutReply(**workout)
+        assert workout_obj in generate_workouts
+        assert workout_obj.started_at is not None
 
 
 def test_delete_workouts(client: TestClient, generate_workouts: list[schemas.WorkoutReply]):
@@ -77,3 +82,12 @@ def test_get_latest_workout(client: TestClient, generate_workouts: list[schemas.
         assert response.status_code == 200
         other_workout = schemas.WorkoutReply(**response.json())
         assert latest_workout.started_at >= other_workout.started_at
+
+
+def test_update_workouts_null_started_at(client: TestClient, generate_workouts: list[schemas.WorkoutReply]):
+    for workout in generate_workouts:
+        new_name = "".join(random.choices(string.ascii_uppercase, k=STRING_LENGTH))
+
+        # Try to update with null started_at
+        response = client.put(f"/Workout/{workout.id}", json={"name": new_name, "started_at": None})
+        assert response.status_code == 400

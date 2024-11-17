@@ -10,7 +10,7 @@ class Workout(BASE):
 
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String, nullable=False)
-    started_at = Column(DateTime, nullable=True)
+    started_at = Column(DateTime, nullable=False)
 
     # Relationships
     user_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False, index=True)

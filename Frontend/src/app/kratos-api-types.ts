@@ -31,6 +31,7 @@ export interface CreateExercise {
 export type WorkoutBase = {
     id?: number
     name?: string
+    started_at?: string
 }
 
 export type Workout = WorkoutBase & {}

@@ -11,13 +11,13 @@ Base.metadata.create_all(bind=engine)
 class WorkoutBase(BaseModel):
     id: int
     name: str
-    started_at: datetime | None = None
+    started_at: datetime
 
 
 class WorkoutReply(BaseModel):
     id: int
     name: str
-    started_at: datetime | None = None
+    started_at: datetime
     sets: "list[ExerciseSet]"
 
 

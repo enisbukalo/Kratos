@@ -39,7 +39,7 @@ export class NewWorkoutDialogComponent {
     const workout = {
       name: this.workoutName,
       user_id: this.currentUser.id,
-      date: new Date()
+      started_at: new Date().toISOString()
     };
 
     this.apiService.createWorkout(workout).subscribe(

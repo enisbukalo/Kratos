@@ -101,7 +101,7 @@ def generate_workouts(client: TestClient, generate_users: list[schemas.UserReply
         assert response.status_code == 200
         workout = schemas.WorkoutReply(**response.json())
         assert workout.name == workout_name
-        assert workout.started_at is None
+        assert workout.started_at is not None
         to_return.append(workout)
 
     return to_return

@@ -1,4 +1,5 @@
 from typing_extensions import Annotated
+from datetime import datetime
 
 from fastapi import APIRouter, Depends, Path, HTTPException
 from sqlalchemy.orm import Session
@@ -36,7 +37,7 @@ async def get_workout(id: int = Path(gt=0), db: Session = Depends(get_db)):
 
 @router.post("", response_model=schemas.WorkoutReply)
 async def create_workout(model_to_create: schemas.CreateWorkout, db: Session = Depends(get_db)):
-    created_model = models.Workout(**model_to_create.model_dump())
+    created_model = models.Workout(**model_to_create.model_dump(), started_at=datetime.now())
 
     db.add(created_model)
     db.commit()
@@ -60,6 +61,9 @@ async def update_workout(model_to_update: schemas.UpdateWorkout, id: int = Path(
         raise HTTPException(status_code=404, detail=f"No Workout With Id {id} Exists.")
 
     update_data = model_to_update.model_dump(exclude_unset=True)
+    if "started_at" in update_data and update_data["started_at"] is None:
+        raise HTTPException(status_code=400, detail="started_at cannot be null")
+
     query.update(update_data, synchronize_session=False)
     db.commit()
     db.refresh(workout_to_update)
