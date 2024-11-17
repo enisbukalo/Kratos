@@ -1,5 +1,6 @@
 import string
 import random
+from datetime import datetime
 
 from fastapi.testclient import TestClient
 from app import schemas
@@ -36,12 +37,21 @@ def test_delete_workouts(client: TestClient, generate_workouts: list[schemas.Wor
     assert len(response.json()) == 0
 
 
-def test_update_workouts(client: TestClient, generate_users: list[schemas.User], generate_workouts: list[schemas.WorkoutReply]):
+def test_update_workouts(client: TestClient, generate_workouts: list[schemas.WorkoutReply]):
     for workout in generate_workouts:
         new_name = "".join(random.choices(string.ascii_uppercase, k=STRING_LENGTH))
-        new_user = random.choice(generate_users)
-        response = client.put(f"/Workout/{workout.id}", json={"name": new_name, "user_id": new_user.id})
+        started_at = datetime.now()
+
+        response = client.put(f"/Workout/{workout.id}", json={"name": new_name, "started_at": started_at.isoformat()})
         assert response.status_code == 200
 
-        new_workout = schemas.Workout(**response.json())
-        assert new_workout.name == new_name
+        updated_workout = schemas.Workout(**response.json())
+        assert updated_workout.name == new_name
+        assert updated_workout.started_at is not None
+
+        # Verify through GET as well
+        response = client.get(f"/Workout/{workout.id}")
+        assert response.status_code == 200
+        get_workout = schemas.WorkoutReply(**response.json())
+        assert get_workout.name == new_name
+        assert get_workout.started_at is not None

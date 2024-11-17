@@ -45,14 +45,15 @@ async def delete_workout(id: int = Path(gt=0), db: Session = Depends(get_db)):
 
 
 @router.put("/{id}", response_model=schemas.Workout)
-async def update_workout(model_to_update: schemas.CreateWorkout, id: int = Path(gt=0), db: Session = Depends(get_db)):
+async def update_workout(model_to_update: schemas.UpdateWorkout, id: int = Path(gt=0), db: Session = Depends(get_db)):
     query = db.query(models.Workout).filter(models.Workout.id == id)
     workout_to_update = query.first()
 
     if workout_to_update is None:
         raise HTTPException(status_code=404, detail=f"No Workout With Id {id} Exists.")
 
-    query.update(model_to_update.model_dump(), synchronize_session=False)
+    update_data = model_to_update.model_dump(exclude_unset=True)
+    query.update(update_data, synchronize_session=False)
     db.commit()
     db.refresh(workout_to_update)
 

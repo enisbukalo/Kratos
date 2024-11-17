@@ -1,5 +1,6 @@
-from sqlalchemy import Column, Integer, ForeignKey, String
+from sqlalchemy import Column, Integer, ForeignKey, String, DateTime
 from sqlalchemy.orm import relationship
+from datetime import datetime
 
 from app.models import BASE
 
@@ -9,6 +10,7 @@ class Workout(BASE):
 
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String, nullable=False)
+    started_at = Column(DateTime, nullable=True)
 
     # Relationships
     user_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False, index=True)

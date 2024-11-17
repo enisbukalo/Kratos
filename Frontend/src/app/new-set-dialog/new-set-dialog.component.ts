@@ -58,7 +58,21 @@ export class NewSetDialogComponent {
   }
 
   addSet() {
-    this.sets.push(this.createEmptySet());
+    if (this.sets.length > 0) {
+      const previousSet = this.sets[this.sets.length - 1];
+      const newSet: CreateSet = {
+        reps: previousSet.reps,
+        weight: previousSet.weight,
+        duration: previousSet.duration,
+        date: new Date().toISOString().split('T')[0],
+        exercise_id: previousSet.exercise_id,
+        workout_id: previousSet.workout_id,
+        user_id: previousSet.user_id
+      };
+      this.sets.push(newSet);
+    } else {
+      this.sets.push(this.createEmptySet());
+    }
   }
 
   removeSet(index: number) {
