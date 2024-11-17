@@ -1,52 +1,40 @@
-@startuml Models
+@startuml
+!theme plain
 
-skinparam linetype ortho
-skinparam class {
-    BackgroundColor White
-    ArrowColor Black
-    BorderColor Black
+entity User {
+  * id: integer <<generated>>
+  * name: string
+  * email: string
 }
 
-class User {
-    + id: Integer (PK)
-    + name: String
-    + height: Float
-    + weight: Float
-    --
-    + workouts: List[Workout]
-    + sets: List[ExerciseSet]
+entity Workout {
+  * id: integer <<generated>>
+  * name: string
+  * started_at: datetime <<generated>>
+  * user_id: integer <<FK>>
 }
 
-class Workout {
-    + id: Integer (PK)
-    + name: String
-    --
-    + user_id: Integer (FK)
-    + sets: List[ExerciseSet]
+entity Exercise {
+  * id: integer <<generated>>
+  * name: string
+  * description: string
 }
 
-class ExerciseSet {
-    + id: Integer (PK)
-    + reps: Integer
-    + weight: Float
-    + duration: Integer
-    + date: Date
-    --
-    + workout_id: Integer (FK)
-    + exercise_id: Integer (FK)
-    + user_id: Integer (FK)
+entity ExerciseSet {
+  * id: integer <<generated>>
+  * reps: integer
+  * weight: float
+  * duration: integer
+  * distance: float
+  * date: date
+  * exercise_id: integer <<FK>>
+  * workout_id: integer <<FK>>
+  * user_id: integer <<FK>>
 }
 
-class Exercise {
-    + id: Integer (PK)
-    + name: String
-    + description: String
-}
-
-' Relationships
-User "1" *-- "many" Workout : has
-User "1" *-- "many" ExerciseSet : has
-Workout "1" *-- "many" ExerciseSet : contains
-Exercise "1" -- "many" ExerciseSet : used in
+User ||--o{ Workout
+User ||--o{ ExerciseSet
+Workout ||--o{ ExerciseSet
+Exercise ||--o{ ExerciseSet
 
 @enduml

@@ -50,6 +50,7 @@ export class NewSetDialogComponent {
       reps: 0,
       weight: 0,
       duration: 0,
+      distance: 0,
       date: new Date().toISOString().split('T')[0],
       exercise_id: 0,
       workout_id: 0,
@@ -58,7 +59,22 @@ export class NewSetDialogComponent {
   }
 
   addSet() {
-    this.sets.push(this.createEmptySet());
+    if (this.sets.length > 0) {
+      const previousSet = this.sets[this.sets.length - 1];
+      const newSet: CreateSet = {
+        reps: previousSet.reps,
+        weight: previousSet.weight,
+        duration: previousSet.duration,
+        distance: previousSet.distance,
+        date: new Date().toISOString().split('T')[0],
+        exercise_id: previousSet.exercise_id,
+        workout_id: previousSet.workout_id,
+        user_id: previousSet.user_id
+      };
+      this.sets.push(newSet);
+    } else {
+      this.sets.push(this.createEmptySet());
+    }
   }
 
   removeSet(index: number) {
@@ -76,6 +92,7 @@ export class NewSetDialogComponent {
         reps: set.reps ?? 0,
         weight: set.weight ?? 0,
         duration: set.duration ?? 0,
+        distance: set.distance ?? 0,
         date: today
       }));
 

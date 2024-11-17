@@ -6,7 +6,9 @@ export type GetQueryParams = {
 }
 
 export type UserQueryParams = GetQueryParams & {}
-export type WorkoutQueryParams = GetQueryParams & {}
+export type WorkoutQueryParams = GetQueryParams & {
+    latest?: boolean
+}
 export type ExerciseQueryParams = GetQueryParams & {}
 export type SetQueryParams = GetQueryParams & {}
 //#endregion
@@ -29,6 +31,7 @@ export interface CreateExercise {
 export type WorkoutBase = {
     id?: number
     name?: string
+    started_at?: string
 }
 
 export type Workout = WorkoutBase & {}
@@ -40,6 +43,10 @@ export type WorkoutReply = WorkoutBase & {
 export interface CreateWorkout {
     name: string
     user_id: number
+}
+
+export interface UpdateWorkout {
+    name: string
 }
 //#endregion
 
@@ -70,6 +77,7 @@ export type SetBase = {
     reps?: number
     weight?: number
     duration?: number
+    distance?: number
     exercise?: Exercise
     date?: string
 }
@@ -86,6 +94,7 @@ export interface CreateSet {
     reps: number
     weight: number
     duration: number
+    distance: number
     date: string
     exercise_id: number
     workout_id: number

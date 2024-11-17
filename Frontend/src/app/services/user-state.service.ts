@@ -25,6 +25,10 @@ export class UserStateService {
         this.currentUser.next(user);
     }
 
+    getCurrentUserId(): number {
+        return this.currentUser.value?.id || 0;
+    }
+
     refreshUserData() {
         const currentUserValue = this.currentUser.value;
         if (currentUserValue?.id) {

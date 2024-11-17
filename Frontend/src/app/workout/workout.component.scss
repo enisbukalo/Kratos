@@ -33,6 +33,7 @@
     }
 }
 
+
 .set-item {
     display: flex;
     justify-content: space-between;
@@ -155,5 +156,97 @@
         &:hover {
             opacity: 1;
         }
+    }
+}
+
+.start-workout-button {
+    background-color: #4CAF50 !important;
+    color: white !important;
+}
+
+mat-card-actions {
+    display: flex;
+    justify-content: space-between;
+    padding: 16px;
+}
+
+.workout-tracker {
+    margin-top: 20px;
+
+    .exercise-group {
+        margin-bottom: 24px;
+
+        h3 {
+            color: var(--text-primary);
+            margin-bottom: 16px;
+        }
+
+        table {
+            width: 100%;
+            background: var(--surface-2);
+            border-radius: 8px;
+        }
+
+        .mat-column-setNumber {
+            width: 80px;
+        }
+
+        mat-form-field {
+            width: 100%;
+        }
+    }
+}
+
+.workout-grid {
+    display: flex;
+    overflow-x: auto;
+    gap: 16px;
+}
+
+.exercise-column {
+    min-width: 200px;
+    flex-shrink: 0;
+}
+
+.sets-column {
+    min-width: 150px;
+    flex-shrink: 0;
+}
+
+.header {
+    font-weight: bold;
+    padding: 8px;
+    background: var(--surface-2);
+    border-radius: 4px;
+    margin-bottom: 8px;
+}
+
+.exercise-row,
+.set-row {
+    padding: 8px;
+    min-height: 60px;
+    display: flex;
+    align-items: center;
+}
+
+.set-inputs {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    width: 100%;
+}
+
+mat-form-field {
+    width: 100%;
+}
+
+.exercise-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+
+    h3 {
+        margin: 0;
     }
 }

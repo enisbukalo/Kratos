@@ -97,10 +97,12 @@ def generate_workouts(client: TestClient, generate_users: list[schemas.UserReply
 
     for user in generate_users:
         workout_name = "".join(random.choices(string.ascii_uppercase, k=SKELETON_NAME_LENGTH))
-        response = client.post("/Workout", json={"name": workout_name, "user_id": user.id})
+        started_at = datetime.now()
+        response = client.post("/Workout", json={"name": workout_name, "user_id": user.id, "started_at": started_at.isoformat()})
         assert response.status_code == 200
         workout = schemas.WorkoutReply(**response.json())
         assert workout.name == workout_name
+        assert workout.started_at is not None
         to_return.append(workout)
 
     return to_return

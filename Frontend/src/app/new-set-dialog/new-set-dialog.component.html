@@ -31,8 +31,13 @@
                     </mat-form-field>
 
                     <mat-form-field class="third-width">
-                        <mat-label>Duration (seconds)</mat-label>
+                        <mat-label>Duration</mat-label>
                         <input matInput type="number" [(ngModel)]="set.duration" [name]="'duration' + i" min="0">
+                    </mat-form-field>
+
+                    <mat-form-field class="third-width">
+                        <mat-label>Distance</mat-label>
+                        <input matInput type="number" [(ngModel)]="set.distance" [name]="'distance' + i" min="0">
                     </mat-form-field>
                 </div>
             </div>

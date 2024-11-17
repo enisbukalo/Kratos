@@ -11,6 +11,7 @@ class ExerciseSet(BASE):
     reps = Column(Integer, nullable=False)
     weight = Column(FLOAT, nullable=False)
     duration = Column(Integer, nullable=False)  # Duration in seconds
+    distance = Column(FLOAT, nullable=False)
     date = Column(DATE, nullable=False)
 
     # Relationships

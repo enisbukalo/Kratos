@@ -3,7 +3,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { MaterialModule } from '../material.module';
 import { KratosServiceService } from '../kratos-service.service';
-import { WorkoutReply, Set } from '../kratos-api-types';
+import { WorkoutReply, Set, Workout, CreateWorkout, CreateSet } from '../kratos-api-types';
 import { SidebarComponent } from '../sidebar/sidebar.component';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { NewSetDialogComponent } from '../new-set-dialog/new-set-dialog.component';
@@ -11,9 +11,24 @@ import { MatIconModule } from '@angular/material/icon';
 import { UserStateService } from '../services/user-state.service';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { DescriptionDialogComponent } from '../description-dialog/description-dialog.component';
+import { FormsModule } from '@angular/forms';
+import { MatTableModule } from '@angular/material/table';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { forkJoin } from 'rxjs';
 
 interface GroupedSets {
   [exerciseName: string]: Set[];
+}
+
+interface EditableSet extends Set {
+  isEditing: boolean;
+  originalValues: {
+    weight: number;
+    reps: number;
+    duration: number;
+    distance: number;
+  };
 }
 
 @Component({
@@ -25,7 +40,11 @@ interface GroupedSets {
     SidebarComponent,
     MatDialogModule,
     MatIconModule,
-    MatExpansionModule
+    MatExpansionModule,
+    FormsModule,
+    MatTableModule,
+    MatFormFieldModule,
+    MatInputModule
   ],
   templateUrl: './workout.component.html',
   styleUrl: './workout.component.scss'
@@ -35,6 +54,8 @@ export class WorkoutComponent implements OnInit {
   sets: Set[] = [];
   sidebarVisible: boolean = false;
   groupedSets: GroupedSets = {};
+  isWorkoutMode: boolean = false;
+  workoutSets: EditableSet[] = [];
 
   constructor(
     private route: ActivatedRoute,
@@ -113,6 +134,129 @@ export class WorkoutComponent implements OnInit {
       data: { description },
       width: '400px',
       panelClass: 'modern-dialog'
+    });
+  }
+
+  startWorkout(): void {
+    if (!this.workout || this.isWorkoutMode) return;
+
+    const newWorkout: CreateWorkout = {
+      name: `${this.workout.name}`,
+      user_id: this.userState.getCurrentUserId(),
+    };
+
+    this.apiService.createWorkout(newWorkout).subscribe(createdWorkout => {
+      const newSets = this.sets.map(set => ({
+        exercise_id: set.exercise?.id,
+        workout_id: createdWorkout.id,
+        user_id: this.userState.getCurrentUserId(),
+        weight: set.weight,
+        reps: set.reps,
+        duration: set.duration,
+        distance: set.distance,
+        date: new Date().toISOString().split('T')[0]
+      }));
+
+      const createSetObservables = newSets.map(set =>
+        this.apiService.createSet(set)
+      );
+
+      forkJoin(createSetObservables).subscribe(createdSets => {
+        this.workout = createdWorkout;
+        this.sets = createdSets;
+        this.workoutSets = createdSets.map(set => ({
+          ...set,
+          isEditing: false,
+          originalValues: {
+            weight: set.weight || 0,
+            reps: set.reps || 0,
+            duration: set.duration || 0,
+            distance: set.distance || 0
+          }
+        }));
+        this.groupedSets = this.groupSetsByExercise(this.sets);
+        this.isWorkoutMode = true;
+      });
+    });
+  }
+
+  saveWorkout(): void {
+    if (!this.workout?.id) return;
+
+    const updateSetObservables = this.workoutSets
+      .filter(set => set.id !== undefined)
+      .map(set =>
+        this.apiService.updateSet(set.id!, {
+          exercise_id: set.exercise?.id || 0,
+          workout_id: this.workout?.id || 0,
+          user_id: this.userState.getCurrentUserId(),
+          weight: set.weight || 0,
+          reps: set.reps || 0,
+          duration: set.duration || 0,
+          distance: set.distance || 0,
+          date: set.date || new Date().toISOString().split('T')[0]
+        })
+      );
+
+    if (updateSetObservables.length === 0) return;
+
+    forkJoin(updateSetObservables).subscribe(updatedSets => {
+      this.sets = updatedSets;
+      this.groupedSets = this.groupSetsByExercise(this.sets);
+    });
+  }
+
+  endWorkout(): void {
+    this.saveWorkout();
+    this.router.navigate(['/dashboard']);
+  }
+
+  getSetIndices(): number[] {
+    const maxSets = Math.max(...Object.values(this.groupedSets).map(sets => sets.length));
+    return Array(maxSets).fill(0).map((_, i) => i);
+  }
+
+  getExerciseNames(): string[] {
+    return Object.keys(this.groupedSets);
+  }
+
+  getSetsForExercise(exerciseName: string): EditableSet[] {
+    return this.workoutSets.filter(set =>
+      set.exercise?.name === exerciseName
+    );
+  }
+
+  addSetToExercise(exerciseName: string): void {
+    if (!this.workout?.id) return;
+
+    const exercise = this.workoutSets.find(set => set.exercise?.name === exerciseName)?.exercise;
+    if (!exercise) return;
+
+    const newSet: CreateSet = {
+      exercise_id: exercise.id!,
+      workout_id: this.workout.id,
+      user_id: this.userState.getCurrentUserId(),
+      reps: 0,
+      weight: 0,
+      duration: 0,
+      distance: 0,
+      date: new Date().toISOString().split('T')[0]
+    };
+
+    this.apiService.createSet(newSet).subscribe(createdSet => {
+      const editableSet: EditableSet = {
+        ...createdSet,
+        isEditing: false,
+        originalValues: {
+          weight: 0,
+          reps: 0,
+          duration: 0,
+          distance: 0
+        }
+      };
+      this.workoutSets.push(editableSet);
+      this.sets = [...this.sets, createdSet];
+      this.groupedSets = this.groupSetsByExercise(this.sets);
     });
   }
 }

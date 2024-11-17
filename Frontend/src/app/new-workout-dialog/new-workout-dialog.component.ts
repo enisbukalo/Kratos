@@ -8,6 +8,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { KratosServiceService } from '../kratos-service.service';
 import { CookieService } from 'ngx-cookie-service';
+import { CreateWorkout } from '../kratos-api-types';
 
 @Component({
   selector: 'app-new-workout-dialog',
@@ -36,10 +37,9 @@ export class NewWorkoutDialogComponent {
   }
 
   onSubmit() {
-    const workout = {
+    const workout: CreateWorkout = {
       name: this.workoutName,
       user_id: this.currentUser.id,
-      date: new Date()
     };
 
     this.apiService.createWorkout(workout).subscribe(
