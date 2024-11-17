@@ -3,7 +3,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { MaterialModule } from '../material.module';
 import { KratosServiceService } from '../kratos-service.service';
-import { WorkoutReply, Set, Workout, CreateWorkout } from '../kratos-api-types';
+import { WorkoutReply, Set, Workout, CreateWorkout, CreateSet } from '../kratos-api-types';
 import { SidebarComponent } from '../sidebar/sidebar.component';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { NewSetDialogComponent } from '../new-set-dialog/new-set-dialog.component';
@@ -221,5 +221,37 @@ export class WorkoutComponent implements OnInit {
     return this.workoutSets.filter(set =>
       set.exercise?.name === exerciseName
     );
+  }
+
+  addSetToExercise(exerciseName: string): void {
+    if (!this.workout?.id) return;
+
+    const exercise = this.workoutSets.find(set => set.exercise?.name === exerciseName)?.exercise;
+    if (!exercise) return;
+
+    const newSet: CreateSet = {
+      exercise_id: exercise.id!,
+      workout_id: this.workout.id,
+      user_id: this.userState.getCurrentUserId(),
+      reps: 0,
+      weight: 0,
+      duration: 0,
+      date: new Date().toISOString().split('T')[0]
+    };
+
+    this.apiService.createSet(newSet).subscribe(createdSet => {
+      const editableSet: EditableSet = {
+        ...createdSet,
+        isEditing: false,
+        originalValues: {
+          weight: 0,
+          reps: 0,
+          duration: 0
+        }
+      };
+      this.workoutSets.push(editableSet);
+      this.sets = [...this.sets, createdSet];
+      this.groupedSets = this.groupSetsByExercise(this.sets);
+    });
   }
 }

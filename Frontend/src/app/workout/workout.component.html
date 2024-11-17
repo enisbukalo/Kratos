@@ -73,7 +73,12 @@
             </mat-card-header>
             <mat-card-content>
                 <div *ngFor="let exerciseName of getExerciseNames()" class="exercise-group">
-                    <h3>{{exerciseName}}</h3>
+                    <div class="exercise-header">
+                        <h3>{{exerciseName}}</h3>
+                        <button mat-mini-fab color="primary" (click)="addSetToExercise(exerciseName)">
+                            <mat-icon>add</mat-icon>
+                        </button>
+                    </div>
                     <table mat-table [dataSource]="getSetsForExercise(exerciseName)" class="mat-elevation-z8">
                         <ng-container matColumnDef="setNumber">
                             <th mat-header-cell *matHeaderCellDef>Set</th>
@@ -98,8 +103,17 @@
                             </td>
                         </ng-container>
 
-                        <tr mat-header-row *matHeaderRowDef="['setNumber', 'weight', 'reps']"></tr>
-                        <tr mat-row *matRowDef="let row; columns: ['setNumber', 'weight', 'reps'];"></tr>
+                        <ng-container matColumnDef="duration">
+                            <th mat-header-cell *matHeaderCellDef>Duration (s)</th>
+                            <td mat-cell *matCellDef="let set">
+                                <mat-form-field>
+                                    <input matInput type="number" [(ngModel)]="set.duration">
+                                </mat-form-field>
+                            </td>
+                        </ng-container>
+
+                        <tr mat-header-row *matHeaderRowDef="['setNumber', 'weight', 'reps', 'duration']"></tr>
+                        <tr mat-row *matRowDef="let row; columns: ['setNumber', 'weight', 'reps', 'duration'];"></tr>
                     </table>
                 </div>
             </mat-card-content>

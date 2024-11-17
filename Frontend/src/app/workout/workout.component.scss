@@ -239,3 +239,14 @@ mat-card-actions {
 mat-form-field {
     width: 100%;
 }
+
+.exercise-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+
+    h3 {
+        margin: 0;
+    }
+}
