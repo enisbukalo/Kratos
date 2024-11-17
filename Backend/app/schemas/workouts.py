@@ -33,7 +33,6 @@ class CreateWorkout(BaseModel):
 
 class UpdateWorkout(BaseModel):
     name: str | None = None
-    started_at: datetime | None = None
 
 
 class WorkoutQuery(GetQueryParams):

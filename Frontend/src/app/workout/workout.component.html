@@ -59,7 +59,8 @@
                     <mat-icon>add</mat-icon>
                     Add New Exercise
                 </button>
-                <button mat-raised-button class="start-workout-button" (click)="startWorkout()">
+                <button mat-raised-button class="start-workout-button" [disabled]="isWorkoutMode"
+                    (click)="startWorkout()">
                     <mat-icon>play_arrow</mat-icon>
                     Start Workout
                 </button>

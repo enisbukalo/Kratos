@@ -4,7 +4,7 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { catchError, tap } from 'rxjs/operators';
 
-import { UserQueryParams, WorkoutQueryParams, SetQueryParams, ExerciseQueryParams, CreateSet } from './kratos-api-types';
+import { UserQueryParams, WorkoutQueryParams, SetQueryParams, ExerciseQueryParams, CreateSet, UpdateWorkout } from './kratos-api-types';
 import { User, UserReply, Workout, WorkoutReply, Set, SetReply, Exercise } from './kratos-api-types';
 
 import { KratosErrorHandler } from './kratos-error-handler';
@@ -105,7 +105,7 @@ export class KratosServiceService {
       );
   }
 
-  updateWorkout(id: number, workout: Workout): Observable<WorkoutReply> {
+  updateWorkout(id: number, workout: UpdateWorkout): Observable<WorkoutReply> {
     return this.http
       .put<WorkoutReply>(`${this.backendEndpoint}${this.workoutEndpoint}/${id}`, workout, this.httpOptions)
       .pipe(

@@ -21,7 +21,10 @@ async def get_workouts(query_params: Annotated[schemas.WorkoutQuery, Depends(sch
         return [latest_workout] if latest_workout else []
 
     workouts = (
-        query.limit(query_params.page_size).offset((query_params.page_number * query_params.page_size) if query_params.page_number > 1 else 0).all()
+        query.order_by(models.Workout.started_at.desc())
+        .limit(query_params.page_size)
+        .offset((query_params.page_number * query_params.page_size) if query_params.page_number > 1 else 0)
+        .all()
     )
     return workouts if workouts else []
 

@@ -137,7 +137,7 @@ export class WorkoutComponent implements OnInit {
   }
 
   startWorkout(): void {
-    if (!this.workout) return;
+    if (!this.workout || this.isWorkoutMode) return;
 
     const newWorkout: CreateWorkout = {
       name: `${this.workout.name}`,

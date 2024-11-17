@@ -44,6 +44,10 @@ export interface CreateWorkout {
     name: string
     user_id: number
 }
+
+export interface UpdateWorkout {
+    name: string
+}
 //#endregion
 
 //#region user
