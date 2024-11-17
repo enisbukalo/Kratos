@@ -36,7 +36,7 @@ class UpdateWorkout(BaseModel):
 
 
 class WorkoutQuery(GetQueryParams):
-    pass
+    latest: bool = Field(default=False, description="Get only the latest workout by started_at")
 
 
 from .sets import ExerciseSet

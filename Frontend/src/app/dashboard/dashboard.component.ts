@@ -102,11 +102,13 @@ export class DashboardComponent {
     this.userState.currentUser$.subscribe(user => {
       if (user) {
         this.currentUser = user;
-        this.currentUsersWorkouts = user.workouts || [];
-        const allSets = user.workouts
-          ? user.workouts.flatMap(workout => workout.sets || [])
-          : [];
-        this.currentUsersExercises = this.getUniqueExercises(allSets);
+        this.apiService.getLatestWorkout().subscribe(latestWorkouts => {
+          this.currentUsersWorkouts = latestWorkouts;
+          const allSets = latestWorkouts
+            ? latestWorkouts.flatMap(workout => workout.sets || [])
+            : [];
+          this.currentUsersExercises = this.getUniqueExercises(allSets);
+        });
       }
     });
   }
@@ -149,11 +151,15 @@ export class DashboardComponent {
         this.apiService.getUser(parsedUser.id).subscribe(user => {
           this.currentUser = user;
           this.cookieService.set('currentUser', JSON.stringify(user));
-          this.currentUsersWorkouts = user.workouts || [];
-          const allSets = user.workouts
-            ? user.workouts.flatMap(workout => workout.sets || [])
-            : [];
-          this.currentUsersExercises = this.getUniqueExercises(allSets);
+
+          // Get latest workouts
+          this.apiService.getLatestWorkout().subscribe(latestWorkouts => {
+            this.currentUsersWorkouts = latestWorkouts;
+            const allSets = latestWorkouts
+              ? latestWorkouts.flatMap(workout => workout.sets || [])
+              : [];
+            this.currentUsersExercises = this.getUniqueExercises(allSets);
+          });
         });
       }
     }

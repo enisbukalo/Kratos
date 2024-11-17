@@ -105,7 +105,7 @@ export class KratosServiceService {
       );
   }
 
-  updateWorkout(id: number, workout: Workout) {
+  updateWorkout(id: number, workout: Workout): Observable<WorkoutReply> {
     return this.http
       .put<WorkoutReply>(`${this.backendEndpoint}${this.workoutEndpoint}/${id}`, workout, this.httpOptions)
       .pipe(
@@ -114,13 +114,20 @@ export class KratosServiceService {
       );
   }
 
-  deleteWorkout(id: number) {
+  deleteWorkout(id: number): Observable<WorkoutReply> {
     return this.http
       .delete<WorkoutReply>(`${this.backendEndpoint}${this.workoutEndpoint}/${id}`, this.httpOptions)
       .pipe(
         tap(_ => console.log(`Workout Deleted`)),
         catchError((error: HttpErrorResponse) => this.kratosErrorHandler.handleError(error)),
       );
+  }
+
+  getLatestWorkout(): Observable<WorkoutReply[]> {
+    const params: WorkoutQueryParams = {
+      latest: true
+    };
+    return this.getWorkouts(params);
   }
   //#endregion
 
@@ -165,7 +172,7 @@ export class KratosServiceService {
       );
   }
 
-  deleteSet(id: number) {
+  deleteSet(id: number): Observable<SetReply> {
     return this.http
       .delete<SetReply>(`${this.backendEndpoint}${this.setEndpoint}/${id}`, this.httpOptions)
       .pipe(
@@ -216,7 +223,7 @@ export class KratosServiceService {
       );
   }
 
-  deleteExercise(id: number) {
+  deleteExercise(id: number): Observable<Exercise> {
     return this.http
       .delete<Exercise>(`${this.backendEndpoint}${this.exerciseEndpoint}/${id}`, this.httpOptions)
       .pipe(
