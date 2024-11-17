@@ -28,6 +28,7 @@ class Workout(WorkoutBase):
 class CreateWorkout(BaseModel):
     name: str = Field(default="Workout Name", min_length=4, max_length=100)
     user_id: PositiveInt
+    started_at: datetime = Field(default_factory=datetime.now)
 
 
 class UpdateWorkout(BaseModel):

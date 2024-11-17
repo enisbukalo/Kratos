@@ -37,12 +37,10 @@ async def get_workout(id: int = Path(gt=0), db: Session = Depends(get_db)):
 
 @router.post("", response_model=schemas.WorkoutReply)
 async def create_workout(model_to_create: schemas.CreateWorkout, db: Session = Depends(get_db)):
-    created_model = models.Workout(**model_to_create.model_dump(), started_at=datetime.now())
-
+    created_model = models.Workout(**model_to_create.model_dump())
     db.add(created_model)
     db.commit()
     db.refresh(created_model)
-
     return created_model
 
 
