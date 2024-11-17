@@ -115,4 +115,9 @@ export class WorkoutComponent implements OnInit {
       panelClass: 'modern-dialog'
     });
   }
+
+  startWorkout(): void {
+    // TODO: Implement workout start functionality
+    console.log('Starting workout:', this.workout?.name);
+  }
 }

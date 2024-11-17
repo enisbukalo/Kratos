@@ -14,7 +14,7 @@
     <div class="workout-content">
         <mat-card appearance="outlined">
             <mat-card-header>
-                <mat-card-title>Exercises</mat-card-title>
+                <mat-card-title><strong>Exercises</strong></mat-card-title>
             </mat-card-header>
             <mat-card-content>
                 <mat-accordion>
@@ -58,6 +58,10 @@
                 <button mat-raised-button color="primary" (click)="openNewSetDialog()">
                     <mat-icon>add</mat-icon>
                     Add New Exercise
+                </button>
+                <button mat-raised-button class="start-workout-button" (click)="startWorkout()">
+                    <mat-icon>play_arrow</mat-icon>
+                    Start Workout
                 </button>
             </mat-card-actions>
         </mat-card>

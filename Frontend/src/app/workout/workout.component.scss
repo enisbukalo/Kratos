@@ -33,6 +33,7 @@
     }
 }
 
+
 .set-item {
     display: flex;
     justify-content: space-between;
@@ -156,4 +157,15 @@
             opacity: 1;
         }
     }
+}
+
+.start-workout-button {
+    background-color: #4CAF50 !important;
+    color: white !important;
+}
+
+mat-card-actions {
+    display: flex;
+    padding: 16px;
+    justify-content: space-between;
 }
