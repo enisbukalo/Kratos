@@ -81,6 +81,7 @@ async def update_set(model_to_update: schemas.CreateSet, id: int = Path(gt=0), d
         reps=set_to_update.reps,
         weight=set_to_update.weight,
         duration=set_to_update.duration,
+        distance=set_to_update.distance,
         date=set_to_update.date,
         exercise=exercise,
     )

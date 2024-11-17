@@ -77,6 +77,7 @@ export type SetBase = {
     reps?: number
     weight?: number
     duration?: number
+    distance?: number
     exercise?: Exercise
     date?: string
 }
@@ -93,6 +94,7 @@ export interface CreateSet {
     reps: number
     weight: number
     duration: number
+    distance: number
     date: string
     exercise_id: number
     workout_id: number

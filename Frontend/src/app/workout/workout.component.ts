@@ -27,6 +27,7 @@ interface EditableSet extends Set {
     weight: number;
     reps: number;
     duration: number;
+    distance: number;
   };
 }
 
@@ -145,7 +146,6 @@ export class WorkoutComponent implements OnInit {
     };
 
     this.apiService.createWorkout(newWorkout).subscribe(createdWorkout => {
-      // Create new sets for the new workout
       const newSets = this.sets.map(set => ({
         exercise_id: set.exercise?.id,
         workout_id: createdWorkout.id,
@@ -153,6 +153,7 @@ export class WorkoutComponent implements OnInit {
         weight: set.weight,
         reps: set.reps,
         duration: set.duration,
+        distance: set.distance,
         date: new Date().toISOString().split('T')[0]
       }));
 
@@ -169,7 +170,8 @@ export class WorkoutComponent implements OnInit {
           originalValues: {
             weight: set.weight || 0,
             reps: set.reps || 0,
-            duration: set.duration || 0
+            duration: set.duration || 0,
+            distance: set.distance || 0
           }
         }));
         this.groupedSets = this.groupSetsByExercise(this.sets);
@@ -191,6 +193,7 @@ export class WorkoutComponent implements OnInit {
           weight: set.weight || 0,
           reps: set.reps || 0,
           duration: set.duration || 0,
+          distance: set.distance || 0,
           date: set.date || new Date().toISOString().split('T')[0]
         })
       );
@@ -236,6 +239,7 @@ export class WorkoutComponent implements OnInit {
       reps: 0,
       weight: 0,
       duration: 0,
+      distance: 0,
       date: new Date().toISOString().split('T')[0]
     };
 
@@ -246,7 +250,8 @@ export class WorkoutComponent implements OnInit {
         originalValues: {
           weight: 0,
           reps: 0,
-          duration: 0
+          duration: 0,
+          distance: 0
         }
       };
       this.workoutSets.push(editableSet);

@@ -43,6 +43,7 @@ def test_update_sets(client: TestClient, generate_sets: list[schemas.SetReply]):
         new_reps = random.randint(1, 100)
         new_weight = round(random.uniform(0, 100), 2)
         new_duration = random.randint(0, 300)
+        new_distance = round(random.uniform(0, 1000), 2)
         new_date = (datetime.now() + timedelta(days=random.randint(-5, 5))).date().isoformat()
 
         response = client.put(
@@ -51,6 +52,7 @@ def test_update_sets(client: TestClient, generate_sets: list[schemas.SetReply]):
                 "reps": new_reps,
                 "weight": new_weight,
                 "duration": new_duration,
+                "distance": new_distance,
                 "date": new_date,
                 "exercise_id": set.exercise.id,
                 "workout_id": set.workout.id,
@@ -64,4 +66,5 @@ def test_update_sets(client: TestClient, generate_sets: list[schemas.SetReply]):
         assert new_set.reps == new_reps
         assert new_set.weight == new_weight
         assert new_set.duration == new_duration
+        assert new_set.distance == new_distance
         assert new_set.date.isoformat() == new_date

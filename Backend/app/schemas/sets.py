@@ -14,6 +14,7 @@ class SetBase(BaseModel):
     reps: int
     weight: float
     duration: int  # Duration in seconds
+    distance: float
     date: _date
     exercise: "Exercise"
 
@@ -23,6 +24,7 @@ class SetReply(BaseModel):
     reps: int
     weight: float
     duration: int  # Duration in seconds
+    distance: float
     date: _date
     workout: "Workout"
     exercise: "Exercise"
@@ -37,6 +39,7 @@ class CreateSet(BaseModel):
     reps: int = Field(default=5, ge=0)
     weight: float = Field(default=0.0, ge=0.0)
     duration: int = Field(default=0, ge=0)  # Duration in seconds
+    distance: float = Field(default=0.0, ge=0.0)
     date: _date = Field(default=_date.today())
     exercise_id: PositiveInt
     workout_id: PositiveInt

@@ -50,6 +50,7 @@ export class NewSetDialogComponent {
       reps: 0,
       weight: 0,
       duration: 0,
+      distance: 0,
       date: new Date().toISOString().split('T')[0],
       exercise_id: 0,
       workout_id: 0,
@@ -64,6 +65,7 @@ export class NewSetDialogComponent {
         reps: previousSet.reps,
         weight: previousSet.weight,
         duration: previousSet.duration,
+        distance: previousSet.distance,
         date: new Date().toISOString().split('T')[0],
         exercise_id: previousSet.exercise_id,
         workout_id: previousSet.workout_id,
@@ -90,6 +92,7 @@ export class NewSetDialogComponent {
         reps: set.reps ?? 0,
         weight: set.weight ?? 0,
         duration: set.duration ?? 0,
+        distance: set.distance ?? 0,
         date: today
       }));
 
