@@ -13,6 +13,10 @@ import { MatIconModule } from '@angular/material/icon';
 import { CookieService } from 'ngx-cookie-service';
 import { forkJoin } from 'rxjs';
 
+/**
+ * Dialog component for adding new sets to a workout.
+ * Allows users to select exercises and create multiple sets with specified parameters.
+ */
 @Component({
   selector: 'app-new-set-dialog',
   standalone: true,
@@ -45,6 +49,10 @@ export class NewSetDialogComponent {
     this.currentUser = JSON.parse(this.cookieService.get('currentUser'));
   }
 
+  /**
+   * Creates an empty set with default values
+   * @returns New CreateSet object with initialized values
+   */
   private createEmptySet(): CreateSet {
     return {
       reps: 0,
@@ -58,6 +66,9 @@ export class NewSetDialogComponent {
     };
   }
 
+  /**
+   * Adds a new set based on the previous set's values or creates an empty set
+   */
   addSet() {
     if (this.sets.length > 0) {
       const previousSet = this.sets[this.sets.length - 1];
@@ -77,10 +88,17 @@ export class NewSetDialogComponent {
     }
   }
 
+  /**
+   * Removes a set at the specified index
+   * @param index Index of the set to remove
+   */
   removeSet(index: number) {
     this.sets.splice(index, 1);
   }
 
+  /**
+   * Submits the form and creates new sets in the database
+   */
   onSubmit() {
     if (this.selectedExercise?.id) {
       const today = new Date().toISOString().split('T')[0];
@@ -111,13 +129,16 @@ export class NewSetDialogComponent {
     }
   }
 
-  onCancel() {
-    this.dialogRef.close();
-  }
-
+  /**
+   * Loads available exercises from the API
+   */
   loadExercises() {
     this.apiService.getExercises({}).subscribe(exercises => {
       this.exercises = exercises;
     });
+  }
+
+  onCancel() {
+    this.dialogRef.close();
   }
 }

@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, Output, EventEmitter } from '@angular/core';
 import { KratosServiceService } from '../kratos-service.service';
 import { CookieService } from 'ngx-cookie-service';
 import { UserReply, WorkoutReply, Workout, Set } from '../kratos-api-types';
@@ -15,6 +15,10 @@ import { MatDialog } from '@angular/material/dialog';
 import { NewWorkoutDialogComponent } from '../new-workout-dialog/new-workout-dialog.component';
 import { UserStateService } from '../services/user-state.service';
 
+/**
+ * Main dashboard component that displays workout summaries and statistics.
+ * Provides access to create new workouts and view workout history.
+ */
 @Component({
   selector: 'app-dashboard',
   standalone: true,

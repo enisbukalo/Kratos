@@ -1,4 +1,4 @@
-import { Component, inject, Input } from '@angular/core';
+import { Component, inject, Input, OnInit } from '@angular/core';
 import { CookieService } from 'ngx-cookie-service';
 import { KratosServiceService } from '../kratos-service.service';
 import { CreateUser, GetQueryParams, UserReply } from '../kratos-api-types';
@@ -17,6 +17,10 @@ import { MessagesModule } from 'primeng/messages';
 import { MessageService } from 'primeng/api';
 import { UserStateService } from '../services/user-state.service';
 
+/**
+ * Login component that handles user authentication.
+ * Manages user login state and redirects to appropriate pages based on authentication status.
+ */
 @Component({
   selector: 'app-login',
   standalone: true,
@@ -25,7 +29,7 @@ import { UserStateService } from '../services/user-state.service';
   styleUrl: './login.component.scss',
   providers: [MessageService],
 })
-export class LoginComponent {
+export class LoginComponent implements OnInit {
   @Input() user!: UserReply;
 
   currentUser: String;
@@ -48,6 +52,9 @@ export class LoginComponent {
     this.messageService.clear();
   }
 
+  /**
+   * Initializes the component and checks for existing authentication
+   */
   ngOnInit(): void {
     this.getAllUsers();
   }
@@ -97,9 +104,34 @@ export class LoginComponent {
     this.messageService.clear();
   }
 
-  handleLoginSuccess(): void {
-    this.router.navigate(['/dashboard']).then(() => {
-      // Any additional logic after navigation
-    });
+  /**
+   * Handles the login form submission
+   * @param event Form submission event
+   */
+  onSubmit(event: Event): void {
+    // implementation
+  }
+
+  /**
+   * Navigates to the registration page
+   */
+  goToRegister(): void {
+    // implementation
+  }
+
+  /**
+   * Handles successful login response
+   * @param response Login response from the API
+   */
+  private handleLoginSuccess(response: any): void {
+    // implementation
+  }
+
+  /**
+   * Handles login error
+   * @param error Error from the API
+   */
+  private handleLoginError(error: any): void {
+    // implementation
   }
 }

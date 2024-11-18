@@ -65,26 +65,34 @@ export class WorkoutComponent implements OnInit {
     private userState: UserStateService
   ) { }
 
+  /**
+   * Navigates back to the dashboard and refreshes user data
+   */
   goBack(): void {
     this.router.navigate(['/dashboard']).then(() => {
       this.userState.refreshUserData();
     });
   }
 
+  /**
+   * Navigates to the dashboard and refreshes user data
+   */
   goToDashboard(): void {
     this.router.navigate(['/dashboard']).then(() => {
       this.userState.refreshUserData();
     });
   }
 
+  /**
+   * Navigates to the login page
+   */
   goToLogin(): void {
     this.router.navigate(['/login']);
   }
 
-  goToProfile(): void { }
-
-  goToWorkouts(): void { }
-
+  /**
+   * Opens dialog for adding new sets to the current workout
+   */
   openNewSetDialog(): void {
     if (!this.workout?.id) {
       return;
@@ -103,6 +111,11 @@ export class WorkoutComponent implements OnInit {
     });
   }
 
+  /**
+   * Groups sets by their exercise name
+   * @param sets Array of sets to group
+   * @returns Object with exercise names as keys and arrays of sets as values
+   */
   private groupSetsByExercise(sets: Set[]): GroupedSets {
     return sets.reduce((groups: GroupedSets, set) => {
       const exerciseName = set.exercise?.name || 'Unknown Exercise';
@@ -114,6 +127,9 @@ export class WorkoutComponent implements OnInit {
     }, {});
   }
 
+  /**
+   * Initializes the component by loading workout data
+   */
   ngOnInit() {
     const workoutId = Number(this.route.snapshot.paramMap.get('id'));
     if (workoutId) {
@@ -125,6 +141,11 @@ export class WorkoutComponent implements OnInit {
     }
   }
 
+  /**
+   * Shows dialog with exercise description
+   * @param event Mouse event that triggered the dialog
+   * @param description Exercise description to display
+   */
   showDescriptionDialog(event: MouseEvent, description: string | undefined): void {
     event.stopPropagation();
     if (!description) {
@@ -137,6 +158,9 @@ export class WorkoutComponent implements OnInit {
     });
   }
 
+  /**
+   * Starts a new workout based on the current workout template
+   */
   startWorkout(): void {
     if (!this.workout || this.isWorkoutMode) return;
 
@@ -180,6 +204,9 @@ export class WorkoutComponent implements OnInit {
     });
   }
 
+  /**
+   * Saves the current workout progress by updating all sets
+   */
   saveWorkout(): void {
     if (!this.workout?.id) return;
 
@@ -206,26 +233,46 @@ export class WorkoutComponent implements OnInit {
     });
   }
 
+  /**
+   * Ends the current workout and navigates back to dashboard
+   */
   endWorkout(): void {
     this.saveWorkout();
     this.router.navigate(['/dashboard']);
   }
 
+  /**
+   * Gets array of indices for the maximum number of sets across all exercises
+   * @returns Array of sequential numbers from 0 to max sets
+   */
   getSetIndices(): number[] {
     const maxSets = Math.max(...Object.values(this.groupedSets).map(sets => sets.length));
     return Array(maxSets).fill(0).map((_, i) => i);
   }
 
+  /**
+   * Gets list of exercise names from grouped sets
+   * @returns Array of exercise names
+   */
   getExerciseNames(): string[] {
     return Object.keys(this.groupedSets);
   }
 
+  /**
+   * Gets editable sets for a specific exercise
+   * @param exerciseName Name of the exercise to get sets for
+   * @returns Array of editable sets for the exercise
+   */
   getSetsForExercise(exerciseName: string): EditableSet[] {
     return this.workoutSets.filter(set =>
       set.exercise?.name === exerciseName
     );
   }
 
+  /**
+   * Adds a new set to a specific exercise during an active workout
+   * @param exerciseName Name of the exercise to add a set to
+   */
   addSetToExercise(exerciseName: string): void {
     if (!this.workout?.id) return;
 

@@ -3,6 +3,10 @@ import { MAT_DIALOG_DATA, MatDialogModule } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
 import { CommonModule } from '@angular/common';
 
+/**
+ * Dialog component for displaying exercise descriptions.
+ * Provides a simple modal interface to show detailed information about exercises.
+ */
 @Component({
   selector: 'app-description-dialog',
   standalone: true,
@@ -36,5 +40,9 @@ import { CommonModule } from '@angular/common';
     `]
 })
 export class DescriptionDialogComponent {
+  /**
+   * Creates an instance of DescriptionDialogComponent.
+   * @param data Object containing the description text to display
+   */
   constructor(@Inject(MAT_DIALOG_DATA) public data: { description: string }) { }
 }

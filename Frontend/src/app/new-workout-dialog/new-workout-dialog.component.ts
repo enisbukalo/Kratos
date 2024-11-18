@@ -10,6 +10,10 @@ import { KratosServiceService } from '../kratos-service.service';
 import { CookieService } from 'ngx-cookie-service';
 import { CreateWorkout } from '../kratos-api-types';
 
+/**
+ * Dialog component for creating new workout templates.
+ * Allows users to specify workout names and initial configuration.
+ */
 @Component({
   selector: 'app-new-workout-dialog',
   standalone: true,
@@ -36,6 +40,9 @@ export class NewWorkoutDialogComponent {
     this.currentUser = JSON.parse(this.cookieService.get('currentUser'));
   }
 
+  /**
+   * Submits the form and creates a new workout
+   */
   onSubmit() {
     const workout: CreateWorkout = {
       name: this.workoutName,
@@ -49,6 +56,9 @@ export class NewWorkoutDialogComponent {
     );
   }
 
+  /**
+   * Closes the dialog without creating a workout
+   */
   onCancel() {
     this.dialogRef.close();
   }
