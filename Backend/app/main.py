@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
 
-from .routers import exercises, sets, workouts, users
+from .routers import exercises, sets, workouts, users, utilities
 from .database import get_db
 from .models.exercises import DEFAULT_EXERCISES, Exercise
 
@@ -28,6 +28,7 @@ def create_app() -> FastAPI:
     created_app.include_router(workouts.router)
     created_app.include_router(sets.router)
     created_app.include_router(exercises.router)
+    created_app.include_router(utilities.router)
 
     # Initialize database with default exercises
     db = next(get_db())

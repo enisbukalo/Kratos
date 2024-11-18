@@ -1,0 +1,9 @@
+============================= test session starts =============================
+platform win32 -- Python 3.11.1, pytest-8.3.2, pluggy-1.5.0 -- C:\Users\Enis Bukalo\Documents\Venvs\Kratos\Scripts\python.exe
+cachedir: .pytest_cache
+rootdir: C:\Users\Enis Bukalo\Documents\GitHub\Kratos\Frontend
+plugins: anyio-4.4.0, asyncio-0.23.8
+asyncio: mode=Mode.STRICT
+collecting ... collected 0 items
+
+============================ no tests ran in 0.03s ============================
