@@ -21,14 +21,14 @@
                         <mat-expansion-panel-header>
                             <mat-panel-title>
                                 {{exercise.key}}
-                            </mat-panel-title>
-                            <mat-panel-description>
-                                <span class="sets-count">{{exercise.value.length}} sets</span>
                                 <button mat-icon-button
                                     (click)="showDescriptionDialog($event, exercise.value[0].exercise?.description)"
                                     matTooltip="View Description" type="button">
                                     <mat-icon class="info-icon">info</mat-icon>
                                 </button>
+                            </mat-panel-title>
+                            <mat-panel-description>
+                                <span class="sets-count">{{exercise.value.length}} sets</span>
                                 <button mat-icon-button color="warn" (click)="deleteExercise(exercise.key)"
                                     matTooltip="Delete Exercise" type="button">
                                     <mat-icon>delete</mat-icon>
