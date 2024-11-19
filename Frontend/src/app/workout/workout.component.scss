@@ -206,14 +206,16 @@ mat-card-actions {
                 color: var(--text-secondary);
                 margin-bottom: 0.5rem;
                 font-weight: 500;
+                white-space: nowrap;
             }
 
             .set-inputs {
                 display: grid;
                 gap: 1rem;
+                justify-content: end;
 
                 @media (min-width: 600px) {
-                    grid-template-columns: repeat(4, 1fr);
+                    grid-template-columns: repeat(4, minmax(120px, 1fr));
                 }
 
                 @media (max-width: 599px) {
@@ -222,6 +224,8 @@ mat-card-actions {
 
                 mat-form-field {
                     width: 100%;
+                    max-width: 150px;
+                    margin-left: auto;
                 }
             }
         }
