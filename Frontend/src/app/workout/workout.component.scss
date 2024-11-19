@@ -285,3 +285,26 @@ mat-form-field {
         margin: 0;
     }
 }
+
+.mat-expansion-panel {
+    .mat-expansion-panel-header {
+        .mat-expansion-panel-header-description {
+            button {
+                opacity: 0.8;
+                transition: opacity 0.2s;
+
+                &:hover {
+                    opacity: 1;
+                }
+            }
+
+            .info-icon {
+                color: var(--accent-2);
+            }
+
+            mat-icon {
+                font-size: 18px;
+            }
+        }
+    }
+}

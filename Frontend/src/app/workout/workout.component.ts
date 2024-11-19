@@ -16,6 +16,7 @@ import { MatTableModule } from '@angular/material/table';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { forkJoin } from 'rxjs';
+import { ConfirmDialogComponent } from '../confirm-dialog/confirm-dialog.component';
 
 interface GroupedSets {
   [exerciseName: string]: Set[];
@@ -44,7 +45,8 @@ interface EditableSet extends Set {
     FormsModule,
     MatTableModule,
     MatFormFieldModule,
-    MatInputModule
+    MatInputModule,
+    ConfirmDialogComponent
   ],
   templateUrl: './workout.component.html',
   styleUrl: './workout.component.scss'
@@ -56,6 +58,8 @@ export class WorkoutComponent implements OnInit {
   groupedSets: GroupedSets = {};
   isWorkoutMode: boolean = false;
   workoutSets: EditableSet[] = [];
+  showDeleteDialog = false;
+  exerciseToDelete?: string;
 
   constructor(
     private route: ActivatedRoute,
@@ -305,5 +309,59 @@ export class WorkoutComponent implements OnInit {
       this.sets = [...this.sets, createdSet];
       this.groupedSets = this.groupSetsByExercise(this.sets);
     });
+  }
+
+  /**
+   * Initiates the delete exercise flow
+   * @param exerciseName Name of the exercise to delete
+   */
+  deleteExercise(exerciseName: string): void {
+    this.exerciseToDelete = exerciseName;
+    this.showDeleteDialog = true;
+  }
+
+  /**
+   * Confirms and executes the exercise deletion
+   */
+  confirmDeleteExercise(): void {
+    if (!this.exerciseToDelete) return;
+
+    const exerciseName = this.exerciseToDelete;
+    let setsToDelete: any[] = [];
+
+    if (this.isWorkoutMode) {
+      setsToDelete = this.workoutSets.filter(set =>
+        set.exercise?.name === exerciseName && set.id
+      );
+    } else {
+      setsToDelete = this.sets.filter(set =>
+        set.exercise?.name === exerciseName && set.id
+      );
+    }
+
+    const deleteObservables = setsToDelete.map(set =>
+      this.apiService.deleteSet(set.id!)
+    );
+
+    if (deleteObservables.length > 0) {
+      forkJoin(deleteObservables).subscribe({
+        next: () => {
+          if (this.isWorkoutMode) {
+            this.workoutSets = this.workoutSets.filter(set =>
+              set.exercise?.name !== exerciseName
+            );
+          }
+          this.sets = this.sets.filter(set =>
+            set.exercise?.name !== exerciseName
+          );
+          this.groupedSets = this.groupSetsByExercise(this.sets);
+          this.showDeleteDialog = false;
+          this.exerciseToDelete = undefined;
+        },
+        error: (error) => {
+          console.error('Error deleting exercise:', error);
+        }
+      });
+    }
   }
 }
