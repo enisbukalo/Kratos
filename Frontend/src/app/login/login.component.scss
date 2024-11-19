@@ -49,13 +49,12 @@
         }
 
         .p-card-header {
-            background: transparent;
-            border: none;
-            padding: 1.5rem;
-            color: var(--text-primary);
-            font-weight: 700;
-            font-size: 1.25rem;
-            text-align: center;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 1.5rem 1rem 0.5rem;
+            width: 100%;
 
             h2 {
                 margin: 0.5rem 0 0;
@@ -238,4 +237,35 @@
     align-items: center;
     width: 100%;
     margin-bottom: 1rem;
+}
+
+.user-header {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    padding: 0;
+
+    .delete-button {
+        position: absolute;
+        right: 1rem;
+        top: 1rem;
+        color: var(--text-secondary);
+        transition: color 0.2s ease;
+        z-index: 1;
+        width: auto !important;
+        height: 3rem;
+        width: 3rem !important;
+
+        &:hover {
+            color: var(--accent-2);
+        }
+    }
+}
+
+.user:hover {
+    .delete-button {
+        opacity: 1;
+    }
 }

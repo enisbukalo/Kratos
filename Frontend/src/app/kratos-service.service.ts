@@ -11,7 +11,7 @@ import { KratosErrorHandler } from './kratos-error-handler';
 
 @Injectable({ providedIn: 'root' })
 export class KratosServiceService {
-  private readonly backendEndpoint = 'http://localhost:8080';
+  private readonly backendEndpoint = 'http://localhost:9599';
   private readonly userEndpoint = '/User';
   private readonly workoutEndpoint = '/Workout';
   private readonly setEndpoint = '/Set';

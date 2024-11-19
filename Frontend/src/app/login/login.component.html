@@ -5,8 +5,13 @@
     <div class="user">
         <p-card>
             <ng-template pTemplate="header">
-                <p-avatar [label]="getFirstLetter(user.name)" styleClass="mr-2" size="xlarge" shape="circle" />
-                <h2>{{user.name}}</h2>
+                <div class="user-header">
+                    <p-avatar [label]="getFirstLetter(user.name)" styleClass="mr-2" size="xlarge" shape="circle" />
+                    <h2>{{user.name}}</h2>
+                    <button pButton class="delete-button p-button-rounded p-button-danger p-button-text"
+                        icon="pi pi-trash" (click)="deleteUser($event, user)">
+                    </button>
+                </div>
             </ng-template>
 
             <div class="user-info">
@@ -50,3 +55,7 @@
         </p-card>
     </div>
 </div>
+<app-confirm-dialog [visible]="showDeleteDialog" header="Confirm Delete"
+    [message]="'Are you sure you want to delete ' + (userToDelete?.name || 'this user') + '?'"
+    (confirm)="confirmDelete()" (reject)="showDeleteDialog = false" (hide)="showDeleteDialog = false">
+</app-confirm-dialog>

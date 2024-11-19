@@ -11,7 +11,7 @@ services:
     volumes:
       - ./Backend:/Backend
     ports:
-      - 8080:8080
+      - 9599:9599
     environment:
       - WATCHFILES_FORCE_POLLING=true
     restart: on-failure
@@ -27,7 +27,7 @@ services:
       - ./Frontend:/Frontend
       - /Frontend/node_modules
     ports:
-      - 3030:3030
+      - 9598:9598
     environment:
       - NG_CLI_ANALYTICS=false
     restart: on-failure

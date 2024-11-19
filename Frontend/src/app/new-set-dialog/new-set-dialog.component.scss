@@ -36,6 +36,10 @@ mat-dialog-content {
     border-radius: 8px;
     padding: 16px;
     margin-bottom: 16px;
+
+    @media (max-width: 600px) {
+        padding: 12px;
+    }
 }
 
 .set-header {
@@ -53,6 +57,17 @@ mat-dialog-content {
 .set-inputs {
     display: flex;
     gap: 16px;
+    flex-wrap: wrap;
+
+    @media (max-width: 600px) {
+        flex-direction: column;
+        gap: 8px;
+
+        .third-width {
+            width: 100%;
+            margin-right: 0;
+        }
+    }
 }
 
 .third-width {

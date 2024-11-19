@@ -132,13 +132,23 @@
     display: flex;
     gap: 1rem;
     padding: 0.5rem;
+    flex-wrap: wrap;
 
-    .detail-item {
-        display: flex;
-        align-items: center;
-        gap: 0.25rem;
-        color: var(--text-secondary);
-        font-size: 0.875rem;
+    @media (max-width: 600px) {
+        flex-direction: column;
+        gap: 0.5rem;
+
+        .detail-item {
+            width: 100%;
+            justify-content: space-between;
+            padding: 0.5rem;
+            background: var(--surface-3);
+            border-radius: 6px;
+
+            .detail-icon {
+                margin-right: 0.5rem;
+            }
+        }
     }
 }
 

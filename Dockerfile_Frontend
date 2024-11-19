@@ -5,4 +5,4 @@ WORKDIR /Frontend
 COPY ./Frontend/package*.json ./
 RUN npm install
 
-CMD ["npm", "start", "--", "--port", "3030"]
+CMD ["npm", "start", "--", "--port", "9598"]

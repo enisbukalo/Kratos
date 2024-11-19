@@ -16,6 +16,7 @@ import { MessageModule } from 'primeng/message';
 import { MessagesModule } from 'primeng/messages';
 import { MessageService } from 'primeng/api';
 import { UserStateService } from '../services/user-state.service';
+import { ConfirmDialogComponent } from '../confirm-dialog/confirm-dialog.component';
 
 /**
  * Login component that handles user authentication.
@@ -24,13 +25,15 @@ import { UserStateService } from '../services/user-state.service';
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [FormsModule, MessagesModule, MessageModule, ToastModule, CommonModule, AvatarModule, CardModule, ButtonModule, SkeletonModule, InputNumberModule, DividerModule,],
+  imports: [FormsModule, MessagesModule, MessageModule, ToastModule, CommonModule, AvatarModule, CardModule, ButtonModule, SkeletonModule, InputNumberModule, DividerModule, ConfirmDialogComponent],
   templateUrl: './login.component.html',
   styleUrl: './login.component.scss',
   providers: [MessageService],
 })
 export class LoginComponent implements OnInit {
   @Input() user!: UserReply;
+
+  alertLifetime: number = 3000;
 
   currentUser: String;
   users: UserReply[] = [];
@@ -42,6 +45,9 @@ export class LoginComponent implements OnInit {
   cookieService = inject(CookieService);
   toastModule = inject(ToastModule);
   router = inject(Router);
+
+  showDeleteDialog: boolean = false;
+  userToDelete?: UserReply;
 
   constructor(
     private apiService: KratosServiceService,
@@ -93,11 +99,11 @@ export class LoginComponent implements OnInit {
   }
 
   showSuccess(): void {
-    this.messageService.add({ severity: 'success', summary: 'Success Message', detail: 'User Create Successfully' });
+    this.messageService.add({ severity: 'success', summary: 'Success Message', detail: 'User Created Successfully', life: this.alertLifetime });
   }
 
   showError(): void {
-    this.messageService.add({ severity: 'error', summary: 'Error Message', detail: 'Failed Creating User' });
+    this.messageService.add({ severity: 'error', summary: 'Error Message', detail: 'Failed Creating User', life: this.alertLifetime });
   }
 
   hideMessages() {
@@ -133,5 +139,49 @@ export class LoginComponent implements OnInit {
    */
   private handleLoginError(error: any): void {
     // implementation
+  }
+
+  /**
+   * Deletes a user from the system
+   * @param event Mouse event to prevent event bubbling
+   * @param user User to be deleted
+   */
+  deleteUser(event: Event, user: UserReply): void {
+    event.stopPropagation();
+    this.userToDelete = user;
+    this.showDeleteDialog = true;
+  }
+
+  confirmDelete(): void {
+    if (!this.userToDelete?.id) {
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Error',
+        detail: 'Invalid user ID',
+        life: this.alertLifetime
+      });
+      return;
+    }
+
+    this.apiService.deleteUser(this.userToDelete.id).subscribe({
+      next: () => {
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Success',
+          detail: 'User Deleted Successfully',
+          life: this.alertLifetime
+        });
+        this.getAllUsers();
+      },
+      error: (error) => {
+        console.error('Error Deleting User:', error);
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'Failed to delete user',
+          life: this.alertLifetime
+        });
+      }
+    });
   }
 }
