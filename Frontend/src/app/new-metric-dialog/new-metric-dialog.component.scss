@@ -1,0 +1,16 @@
+.metric-form {
+    padding: 1rem 0;
+
+    mat-form-field {
+        width: 100%;
+    }
+}
+
+mat-dialog-actions {
+    padding: 1rem;
+    gap: 0.5rem;
+}
+
+mat-dialog-content {
+    min-width: 300px;
+}

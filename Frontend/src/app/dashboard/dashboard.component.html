@@ -21,6 +21,12 @@
                         <p-chart type="line" [data]="data" [options]="options"></p-chart>
                     </div>
                 </mat-card-content>
+                <mat-card-actions>
+                    <button mat-raised-button color="primary" (click)="openNewMetricDialog()">
+                        <mat-icon>add</mat-icon>
+                        Update Weight
+                    </button>
+                </mat-card-actions>
             </mat-card>
 
             <!-- Workouts -->

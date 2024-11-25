@@ -14,6 +14,7 @@ import { SidebarComponent } from '../sidebar/sidebar.component';
 import { MatDialog } from '@angular/material/dialog';
 import { NewWorkoutDialogComponent } from '../new-workout-dialog/new-workout-dialog.component';
 import { UserStateService } from '../services/user-state.service';
+import { NewMetricDialogComponent } from '../new-metric-dialog/new-metric-dialog.component';
 
 /**
  * Main dashboard component that displays workout summaries and statistics.
@@ -31,7 +32,8 @@ import { UserStateService } from '../services/user-state.service';
     CardModule,
     MaterialModule,
     SidebarComponent,
-    NewWorkoutDialogComponent
+    NewWorkoutDialogComponent,
+    NewMetricDialogComponent
   ],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.scss',
@@ -215,5 +217,17 @@ export class DashboardComponent {
         }
       }
     };
+  }
+
+  openNewMetricDialog(): void {
+    const dialogRef = this.dialog.open(NewMetricDialogComponent, {
+      width: '400px'
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.loadWeightMetrics();
+      }
+    });
   }
 }
