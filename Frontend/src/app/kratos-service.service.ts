@@ -8,17 +8,23 @@ import { UserQueryParams, WorkoutQueryParams, SetQueryParams, ExerciseQueryParam
 import { User, UserReply, Workout, WorkoutReply, Set, SetReply, Exercise } from './kratos-api-types';
 
 import { KratosErrorHandler } from './kratos-error-handler';
+import { environment } from '../environments/environment';
 
 @Injectable({ providedIn: 'root' })
 export class KratosServiceService {
-  private readonly backendEndpoint = 'http://localhost:9599';
+  private readonly backendEndpoint: string;
   private readonly userEndpoint = '/User';
   private readonly workoutEndpoint = '/Workout';
   private readonly setEndpoint = '/Set';
   private readonly exerciseEndpoint = '/Exercise';
   private kratosErrorHandler: KratosErrorHandler = new KratosErrorHandler();
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient) {
+    // Use the actual host machine's IP or hostname when accessing from browser
+    const hostname = window.location.hostname;
+    this.backendEndpoint = `http://${hostname}:9599`;
+    console.log('Backend endpoint:', this.backendEndpoint);
+  }
 
   private readonly httpOptions = { headers: new HttpHeaders({ 'Content-Type': 'application/json' }) };
 
