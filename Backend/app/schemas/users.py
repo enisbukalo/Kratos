@@ -1,8 +1,10 @@
 from pydantic import BaseModel, ConfigDict, Field
+from typing import List
 
 from app.database import Base, engine
 
 from .query_params import GetQueryParams
+from .user_metrics import UserMetricsReply
 
 Base.metadata.create_all(bind=engine)
 
@@ -20,6 +22,7 @@ class UserReply(BaseModel):
     height: float
     weight: float
     workouts: "list[WorkoutReply]"
+    metrics: List[UserMetricsReply] = []
 
 
 class User(UserBase):

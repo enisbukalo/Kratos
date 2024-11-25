@@ -4,7 +4,7 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { catchError, tap } from 'rxjs/operators';
 
-import { UserQueryParams, WorkoutQueryParams, SetQueryParams, ExerciseQueryParams, CreateSet, UpdateWorkout } from './kratos-api-types';
+import { UserQueryParams, WorkoutQueryParams, SetQueryParams, ExerciseQueryParams, CreateSet, UpdateWorkout, UserMetrics, UserMetricsReply } from './kratos-api-types';
 import { User, UserReply, Workout, WorkoutReply, Set, SetReply, Exercise } from './kratos-api-types';
 
 import { KratosErrorHandler } from './kratos-error-handler';
@@ -74,6 +74,24 @@ export class KratosServiceService {
       .delete<User>(`${this.backendEndpoint}${this.userEndpoint}/${id}`, this.httpOptions)
       .pipe(
         tap(_ => console.log(`User Deleted`)),
+        catchError((error: HttpErrorResponse) => this.kratosErrorHandler.handleError(error)),
+      );
+  }
+
+  updateUserMetrics(userId: number, metrics: UserMetrics): Observable<UserMetricsReply> {
+    return this.http
+      .post<UserMetricsReply>(`${this.backendEndpoint}${this.userEndpoint}/${userId}/metrics`, metrics)
+      .pipe(
+        tap(_ => console.log(`User Metrics Updated`)),
+        catchError((error: HttpErrorResponse) => this.kratosErrorHandler.handleError(error)),
+      );
+  }
+
+  getUserMetricsHistory(userId: number): Observable<UserMetricsReply[]> {
+    return this.http
+      .get<UserMetricsReply[]>(`${this.backendEndpoint}${this.userEndpoint}/${userId}/metrics`)
+      .pipe(
+        tap(_ => console.log(`User Metrics Retrieved`)),
         catchError((error: HttpErrorResponse) => this.kratosErrorHandler.handleError(error)),
       );
   }

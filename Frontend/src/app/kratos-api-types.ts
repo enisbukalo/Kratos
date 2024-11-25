@@ -51,11 +51,27 @@ export interface UpdateWorkout {
 //#endregion
 
 //#region user
+export interface UserMetrics {
+    weight: number;
+    height: number;
+}
+
+export interface UserMetricsCreate extends UserMetrics {
+    user_id: number;
+}
+
+export interface UserMetricsReply extends UserMetrics {
+    id: number;
+    user_id: number;
+    recorded_at: string;
+}
+
 export type UserBase = {
     id?: number
     name?: string
     height?: number
     weight?: number
+    metrics?: UserMetricsReply[]
 }
 
 export type UserReply = UserBase & {
@@ -101,3 +117,4 @@ export interface CreateSet {
     user_id: number
 }
 //#endregion
+

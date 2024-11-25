@@ -2,6 +2,8 @@ from typing_extensions import Annotated
 
 from fastapi import APIRouter, Depends, Path, HTTPException
 from sqlalchemy.orm import Session
+from typing import List
+from datetime import datetime
 
 from app import models, schemas
 from app.database import get_db, engine
@@ -57,3 +59,29 @@ async def update_user(model_to_update: schemas.CreateUser, id: int = Path(gt=0),
     db.refresh(user_to_update)
 
     return user_to_update
+
+
+@router.post("/{user_id}/metrics", response_model=schemas.UserMetricsReply)
+async def create_user_metrics(user_id: int, metrics: schemas.UserMetricsCreate, db: Session = Depends(get_db)):
+    # Verify user exists
+    user = db.query(models.User).filter(models.User.id == user_id).first()
+    if not user:
+        raise HTTPException(status_code=404, detail=f"User {user_id} not found")
+
+    # Create new metrics entry
+    db_metrics = models.UserMetrics(user_id=user_id, weight=metrics.weight, height=metrics.height, recorded_at=datetime.now())
+    db.add(db_metrics)
+
+    # Update current user metrics
+    user.weight = metrics.weight
+    user.height = metrics.height
+
+    db.commit()
+    db.refresh(db_metrics)
+    return db_metrics
+
+
+@router.get("/{user_id}/metrics", response_model=List[schemas.UserMetricsReply])
+async def get_user_metrics(user_id: int, db: Session = Depends(get_db)):
+    metrics = db.query(models.UserMetrics).filter(models.UserMetrics.user_id == user_id).order_by(models.UserMetrics.recorded_at.desc()).all()
+    return metrics
