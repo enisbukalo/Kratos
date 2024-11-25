@@ -18,14 +18,7 @@ def initialize_exercises(db: Session):
 
 
 def create_app() -> FastAPI:
-    origins = [
-        "http://localhost:9598",
-        "http://127.0.0.1:9598",
-        # Allow any origin with the frontend port
-        f"http://*:9598",
-        # Explicitly allow Docker network access
-        "http://kratos_frontend:9598",
-    ]
+    origins = ["*"]
 
     created_app = FastAPI(title="Kratos", version="0.0.1")
 
