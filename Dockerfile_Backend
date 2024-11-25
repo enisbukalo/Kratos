@@ -1,4 +1,4 @@
-FROM python:3.11.9-alpine
+FROM python:3.11-slim
 
 WORKDIR /Backend
 
@@ -6,4 +6,4 @@ COPY ./Backend/requirements.txt /code/Backend/requirements.txt
 
 RUN pip install --no-cache-dir --upgrade -r /code/Backend/requirements.txt
 
-ENTRYPOINT ["uvicorn", "app.main:app", "--reload", "--host", "0.0.0.0", "--port", "9599"]
+ENTRYPOINT ["uvicorn"]

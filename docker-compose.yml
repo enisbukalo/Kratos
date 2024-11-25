@@ -15,7 +15,7 @@ services:
       - "9599:9599"
     environment:
       - WATCHFILES_FORCE_POLLING=true
-    command: uvicorn app.main:app --host 0.0.0.0 --port 9599 --reload
+    command: app.main:app --host 0.0.0.0 --port 9599 --reload
     networks:
       - kratos-network
 
