@@ -1,0 +1,63 @@
+<div class="metrics-container">
+    <mat-card class="metrics-form-card">
+        <mat-card-header>
+            <mat-card-title>Update Metrics</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+            <form [formGroup]="metricsForm" (ngSubmit)="onSubmit()">
+                <div class="form-fields">
+                    <mat-form-field appearance="outline">
+                        <mat-label>Weight (kg)</mat-label>
+                        <input matInput type="number" placeholder="Enter weight" formControlName="weight">
+                        <mat-error *ngIf="metricsForm.get('weight')?.hasError('required')">
+                            Weight is required
+                        </mat-error>
+                    </mat-form-field>
+
+                    <mat-form-field appearance="outline">
+                        <mat-label>Height (cm)</mat-label>
+                        <input matInput type="number" placeholder="Enter height" formControlName="height">
+                        <mat-error *ngIf="metricsForm.get('height')?.hasError('required')">
+                            Height is required
+                        </mat-error>
+                    </mat-form-field>
+                </div>
+
+                <div class="form-actions">
+                    <button mat-raised-button color="primary" type="submit" [disabled]="!metricsForm.valid">
+                        Update Metrics
+                    </button>
+                </div>
+            </form>
+        </mat-card-content>
+    </mat-card>
+
+    <mat-card class="metrics-history-card" *ngIf="metricsHistory.length">
+        <mat-card-header>
+            <mat-card-title>Metrics History</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+            <div class="table-container">
+                <mat-table [dataSource]="metricsHistory" class="metrics-table">
+                    <ng-container matColumnDef="date">
+                        <mat-header-cell *matHeaderCellDef>Date</mat-header-cell>
+                        <mat-cell *matCellDef="let metric">{{metric.recorded_at | date:'medium'}}</mat-cell>
+                    </ng-container>
+
+                    <ng-container matColumnDef="weight">
+                        <mat-header-cell *matHeaderCellDef>Weight (kg)</mat-header-cell>
+                        <mat-cell *matCellDef="let metric">{{metric.weight}}</mat-cell>
+                    </ng-container>
+
+                    <ng-container matColumnDef="height">
+                        <mat-header-cell *matHeaderCellDef>Height (cm)</mat-header-cell>
+                        <mat-cell *matCellDef="let metric">{{metric.height}}</mat-cell>
+                    </ng-container>
+
+                    <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+                    <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+                </mat-table>
+            </div>
+        </mat-card-content>
+    </mat-card>
+</div>

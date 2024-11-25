@@ -14,6 +14,7 @@ import { SidebarComponent } from '../sidebar/sidebar.component';
 import { MatDialog } from '@angular/material/dialog';
 import { NewWorkoutDialogComponent } from '../new-workout-dialog/new-workout-dialog.component';
 import { UserStateService } from '../services/user-state.service';
+import { NewMetricDialogComponent } from '../new-metric-dialog/new-metric-dialog.component';
 
 /**
  * Main dashboard component that displays workout summaries and statistics.
@@ -31,7 +32,8 @@ import { UserStateService } from '../services/user-state.service';
     CardModule,
     MaterialModule,
     SidebarComponent,
-    NewWorkoutDialogComponent
+    NewWorkoutDialogComponent,
+    NewMetricDialogComponent
   ],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.scss',
@@ -50,6 +52,7 @@ export class DashboardComponent {
   workoutOptions: any;
   workouts: Workout[] = [];
   weightChart: any;
+  weightMetrics: any[] = [];
 
   constructor(
     private apiService: KratosServiceService,
@@ -61,45 +64,8 @@ export class DashboardComponent {
       ? this.currentUser.workouts.flatMap(workout => workout.sets || [])
       : [];
     this.currentUsersExercises = this.getUniqueExercises(allSets);
-    console.log("Current Exercises: ", this.currentUsersExercises);
 
-    this.data = {
-      labels: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'],
-      datasets: [
-        {
-          label: 'Test Weight',
-          data: [298, 296, 295, 295, 294.8, 293, 291],
-        }
-      ]
-    };
-
-    this.options = {
-      responsive: true,
-      legend: {
-        position: 'bottom'
-      }
-    }
-
-    this.weightChart = {
-      type: 'line',
-      data: {
-        labels: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'],
-        datasets: [
-          {
-            label: 'Test Weight',
-            data: [298, 296, 295, 295, 294.8, 293, 291],
-          }
-        ]
-      },
-      options: {
-        responsive: true,
-        scales: {
-          y: {
-            beginAtZero: false
-          }
-        }
-      }
-    };
+    this.loadWeightMetrics();
   }
 
   ngOnInit(): void {
@@ -179,5 +145,69 @@ export class DashboardComponent {
       }
     });
     return Array.from(uniqueExercises.values());
+  }
+
+  private loadWeightMetrics(): void {
+    const userId = this.currentUser?.id;
+    if (!userId) {
+      console.error('No user ID available');
+      return;
+    }
+
+    this.apiService.getUserMetricsHistory(userId).subscribe({
+      next: (metrics) => {
+        if (metrics.length > 0) {
+          // Sort metrics by date
+          this.weightMetrics = metrics.sort((a, b) =>
+            new Date(a.recorded_at).getTime() - new Date(b.recorded_at).getTime()
+          );
+        } else if (this.currentUser?.weight) {
+          // If no metrics but user has weight, create initial data point
+          this.weightMetrics = [{
+            id: 0,
+            user_id: userId,
+            weight: this.currentUser.weight,
+            height: this.currentUser.height || 0,
+            recorded_at: new Date().toISOString()
+          }];
+        } else {
+          // No data available
+          this.weightMetrics = [];
+        }
+
+        // Update chart data
+        this.data = {
+          labels: this.weightMetrics.map(metric =>
+            new Date(metric.recorded_at).toLocaleDateString()
+          ),
+          datasets: [{
+            label: 'Weight',
+            data: this.weightMetrics.map(metric => metric.weight),
+            borderColor: '#2196F3',
+            backgroundColor: '#FFFFFF',
+            borderWidth: 2,
+            pointRadius: 6,
+            pointHoverRadius: 8,
+            tension: 0,
+            fill: false
+          }]
+        };
+      },
+      error: (error) => {
+        console.error('Error loading weight metrics:', error);
+      }
+    });
+  }
+
+  openNewMetricDialog(): void {
+    const dialogRef = this.dialog.open(NewMetricDialogComponent, {
+      width: '400px'
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.loadWeightMetrics();
+      }
+    });
   }
 }
