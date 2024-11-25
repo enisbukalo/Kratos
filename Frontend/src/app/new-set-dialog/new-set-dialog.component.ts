@@ -12,6 +12,8 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatIconModule } from '@angular/material/icon';
 import { CookieService } from 'ngx-cookie-service';
 import { forkJoin } from 'rxjs';
+import { CreateExerciseDialogComponent } from '../create-exercise-dialog/create-exercise-dialog.component';
+import { MatDialog } from '@angular/material/dialog';
 
 /**
  * Dialog component for adding new sets to a workout.
@@ -41,6 +43,7 @@ export class NewSetDialogComponent {
 
   constructor(
     private dialogRef: MatDialogRef<NewSetDialogComponent>,
+    private dialog: MatDialog,
     private apiService: KratosServiceService,
     private cookieService: CookieService,
     @Inject(MAT_DIALOG_DATA) public data: { workoutId: number }
@@ -140,5 +143,19 @@ export class NewSetDialogComponent {
 
   onCancel() {
     this.dialogRef.close();
+  }
+
+  openCreateExerciseDialog() {
+    const dialogRef = this.dialog.open(CreateExerciseDialogComponent, {
+      width: '400px',
+      panelClass: 'modern-dialog'
+    });
+
+    dialogRef.afterClosed().subscribe((result: Exercise | undefined) => {
+      if (result) {
+        this.loadExercises();
+        this.selectedExercise = result;
+      }
+    });
   }
 }

@@ -10,6 +10,13 @@
             </mat-select>
         </mat-form-field>
 
+        <div class="create-exercise-button">
+            <button mat-stroked-button color="primary" (click)="openCreateExerciseDialog()">
+                <mat-icon>add</mat-icon>
+                Create New Exercise
+            </button>
+        </div>
+
         <div *ngIf="selectedExercise">
             <div *ngFor="let set of sets; let i = index" class="set-container">
                 <div class="set-header">
