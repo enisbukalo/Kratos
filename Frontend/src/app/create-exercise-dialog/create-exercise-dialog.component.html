@@ -1,0 +1,20 @@
+<h2 mat-dialog-title>Create New Exercise</h2>
+<mat-dialog-content>
+    <form #exerciseForm="ngForm">
+        <mat-form-field appearance="fill" class="full-width">
+            <mat-label>Exercise Name</mat-label>
+            <input matInput [(ngModel)]="exercise.name" name="name" required>
+        </mat-form-field>
+
+        <mat-form-field appearance="fill" class="full-width">
+            <mat-label>Description</mat-label>
+            <textarea matInput [(ngModel)]="exercise.description" name="description" rows="4"></textarea>
+        </mat-form-field>
+    </form>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+    <button mat-button (click)="onCancel()">Cancel</button>
+    <button mat-raised-button color="primary" (click)="onSubmit()" [disabled]="!exerciseForm.valid">
+        Create Exercise
+    </button>
+</mat-dialog-actions>
