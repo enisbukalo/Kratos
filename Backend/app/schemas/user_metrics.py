@@ -8,7 +8,7 @@ class UserMetricsBase(BaseModel):
 
 
 class UserMetricsCreate(UserMetricsBase):
-    user_id: int
+    pass
 
 
 class UserMetricsReply(UserMetricsBase):

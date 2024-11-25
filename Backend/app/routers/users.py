@@ -37,12 +37,19 @@ async def create_user(model_to_create: schemas.CreateUser, db: Session = Depends
     db.commit()
     db.refresh(created_model)
 
+    new_user_metric = models.UserMetrics(
+        user_id=created_model.id, weight=created_model.weight, height=created_model.height, recorded_at=datetime.now()
+    )
+    db.add(new_user_metric)
+    db.commit()
+
     return created_model
 
 
 @router.delete("/{id}")
 async def delete_user(id: int = Path(gt=0), db: Session = Depends(get_db)):
     db.query(models.User).filter(models.User.id == id).delete()
+    db.query(models.UserMetrics).filter(models.UserMetrics.user_id == id).delete()
     db.commit()
 
 
@@ -62,26 +69,21 @@ async def update_user(model_to_update: schemas.CreateUser, id: int = Path(gt=0),
 
 
 @router.post("/{user_id}/metrics", response_model=schemas.UserMetricsReply)
-async def create_user_metrics(user_id: int, metrics: schemas.UserMetricsCreate, db: Session = Depends(get_db)):
-    # Verify user exists
+async def create_user_metrics(user_id: int = Path(gt=0), metrics: schemas.UserMetricsCreate = None, db: Session = Depends(get_db)):
     user = db.query(models.User).filter(models.User.id == user_id).first()
     if not user:
-        raise HTTPException(status_code=404, detail=f"User {user_id} not found")
+        raise HTTPException(status_code=404, detail=f"No User With Id {user_id} Exists.")
 
-    # Create new metrics entry
     db_metrics = models.UserMetrics(user_id=user_id, weight=metrics.weight, height=metrics.height, recorded_at=datetime.now())
+
     db.add(db_metrics)
-
-    # Update current user metrics
-    user.weight = metrics.weight
-    user.height = metrics.height
-
     db.commit()
     db.refresh(db_metrics)
+
     return db_metrics
 
 
 @router.get("/{user_id}/metrics", response_model=List[schemas.UserMetricsReply])
-async def get_user_metrics(user_id: int, db: Session = Depends(get_db)):
+async def get_user_metrics(user_id: int = Path(gt=0), db: Session = Depends(get_db)):
     metrics = db.query(models.UserMetrics).filter(models.UserMetrics.user_id == user_id).order_by(models.UserMetrics.recorded_at.desc()).all()
     return metrics

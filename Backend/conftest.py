@@ -154,3 +154,21 @@ def generate_sets(
         to_return.append(created_set)
 
     return to_return
+
+
+@pytest.fixture(scope="function")
+def generate_user_metrics(client: TestClient, generate_users: list[schemas.UserReply]) -> list[schemas.UserMetricsReply]:
+    to_return = []
+
+    for user in generate_users:
+        # Create multiple metrics per user
+        for _ in range(3):
+            metrics_data = {"user_id": user.id, "weight": round(random.uniform(100, 250), 2), "height": round(random.uniform(60, 80), 2)}
+
+            # Create metrics using the user metrics endpoint
+            response = client.post(f"/User/{user.id}/metrics", json=metrics_data)
+            assert response.status_code == 200
+            metrics = schemas.UserMetricsReply(**response.json())
+            to_return.append(metrics)
+
+    return to_return

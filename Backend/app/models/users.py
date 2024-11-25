@@ -15,4 +15,4 @@ class User(BASE):
     # Relationships
     workouts = relationship("Workout", back_populates="user", uselist=True, cascade="all")
     sets = relationship("ExerciseSet", back_populates="user", uselist=True, cascade="all")
-    metrics = relationship("UserMetrics", back_populates="user", cascade="all, delete-orphan")
+    metrics = relationship("UserMetrics", back_populates="user", uselist=True, cascade="all, delete-orphan")
