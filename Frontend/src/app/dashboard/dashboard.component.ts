@@ -65,7 +65,6 @@ export class DashboardComponent {
       : [];
     this.currentUsersExercises = this.getUniqueExercises(allSets);
 
-    this.initializeWeightChart();
     this.loadWeightMetrics();
   }
 
@@ -185,7 +184,11 @@ export class DashboardComponent {
             label: 'Weight',
             data: this.weightMetrics.map(metric => metric.weight),
             borderColor: '#2196F3',
-            tension: 0.4,
+            backgroundColor: '#FFFFFF',
+            borderWidth: 2,
+            pointRadius: 6,
+            pointHoverRadius: 8,
+            tension: 0,
             fill: false
           }]
         };
@@ -194,29 +197,6 @@ export class DashboardComponent {
         console.error('Error loading weight metrics:', error);
       }
     });
-  }
-
-  private initializeWeightChart(): void {
-    this.weightChart = {
-      type: 'line',
-      data: {
-        labels: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'],
-        datasets: [
-          {
-            label: 'Test Weight',
-            data: [298, 296, 295, 295, 294.8, 293, 291],
-          }
-        ]
-      },
-      options: {
-        responsive: true,
-        scales: {
-          y: {
-            beginAtZero: false
-          }
-        }
-      }
-    };
   }
 
   openNewMetricDialog(): void {
