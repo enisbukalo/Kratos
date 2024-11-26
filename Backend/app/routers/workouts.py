@@ -1,5 +1,4 @@
 from typing_extensions import Annotated
-from datetime import datetime
 
 from fastapi import APIRouter, Depends, Path, HTTPException
 from sqlalchemy.orm import Session
@@ -35,7 +34,7 @@ async def get_latest_workouts_for_user(user_id: int = Path(gt=0), db: Session = 
     unique_workouts = {workout.name: workout for workout in query.all()}
 
     # Query the database for the latest workout for each unique named workout.
-    return [workout for workout in unique_workouts.values()]
+    return list(unique_workouts.values())
 
 
 @router.get("/{id}", response_model=schemas.WorkoutReply)
@@ -64,13 +63,18 @@ async def delete_workout(id: int = Path(gt=0), db: Session = Depends(get_db)):
 
 @router.put("/{id}", response_model=schemas.Workout)
 async def update_workout(model_to_update: schemas.UpdateWorkout, id: int = Path(gt=0), db: Session = Depends(get_db)):
+    # Query the database for the workout to update.
     query = db.query(models.Workout).filter(models.Workout.id == id)
     workout_to_update = query.first()
 
+    # Ensure that the workout exists.
     if workout_to_update is None:
         raise HTTPException(status_code=404, detail=f"No Workout With Id {id} Exists.")
 
+    # Exclude any unset fields from the update data.
     update_data = model_to_update.model_dump(exclude_unset=True)
+
+    # Ensure that the started_at field is not null.
     if "started_at" in update_data and update_data["started_at"] is None:
         raise HTTPException(status_code=400, detail="started_at cannot be null")
 

@@ -1,4 +1,4 @@
-from pydantic import BaseModel, ConfigDict, Field, PositiveInt, PositiveFloat
+from pydantic import BaseModel, ConfigDict, Field, PositiveInt
 from datetime import date as _date
 
 from app.database import Base, engine

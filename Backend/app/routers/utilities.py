@@ -1,7 +1,5 @@
 from fastapi import APIRouter
-from sqlalchemy import text
 
-from app import models
 from app.database import engine, Base
 
 router = APIRouter(prefix="/Utility", tags=["Utility"])

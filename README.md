@@ -1,75 +1,64 @@
-# Kratos
-Workout app named after the Greek god of strength, Kratos.
+# Kratos Backend API
 
-# To Run Locally
-## Backend
-- ### Run Dev
-    ```fastapi dev Backend/app/main.py --port 9599```
-- ### Navigate To Backend
-    ```http://127.0.0.1:9599/docs```
-## Frontend
-- ### Install Angular
-    ```npm install -g @angular/cli```
-    <br>```npm install```
-    <br>```npm run build```
-- ### Run Server
-    ```ng serve```
-- ### Navigate To Frontend
-    ```http://localhost:9598/```
+A FastAPI-based backend service for tracking workouts, exercises, and user fitness metrics.
 
-## To Run Docker Env
-- ### Build Docker Image & Run Container
-    ```docker compose up```
-    <br><b><i>This Binds The `/Backend' In The Project Directory To '/Backend' In The Container. Any Changed Made On Your Local Machine Will Be Reflected In The Container. Live Updates Are Enabled!
-- ### Navigate To Backend
-    ```http://127.0.0.1:9599/docs```
-- ### Navigate To Frontend
-    ```http://127.0.0.1:9598/```
+## Features
 
+- **Workout Management**
+  - Create and track workouts
+  - Record exercise sets within workouts
+  - Get latest workouts by user
+  - Filter workouts by name and date
 
-## Notes
-- A User can create a workout.
-- A Workout consists of a collection of Sets of Exercises.
-- A Session is a collection of Sets grouped by Exercise.
+- **Exercise Library**
+  - Maintain a database of exercises
+  - Track exercise details and descriptions
+  - Associate exercises with workout sets
+
+- **User Management**
+  - User profiles with height/weight tracking
+  - Historical fitness metrics
+  - Workout history per user
 
 ## API Endpoints
 
 ### Workouts
-- `GET /Workout` - Get all workouts (with pagination)
-  - Query params:
-    - page_size (default: 10)
-    - page_number (default: 1)
-    - latest (boolean, default: false)
-- `GET /Workout/{id}` - Get specific workout
+- `GET /Workout/workouts/` - Get paginated list of workouts
+- `GET /Workout/workouts/{user_id}` - Get latest workouts for user
+- `GET /Workout/{id}` - Get workout by ID
 - `POST /Workout` - Create new workout
-  - Required fields: name, user_id
 - `PUT /Workout/{id}` - Update workout
-  - Optional fields: name
 - `DELETE /Workout/{id}` - Delete workout
 
-### Sets
-- `GET /Set` - Get all sets (with pagination)
-- `GET /Set/{id}` - Get specific set
-- `POST /Set` - Create new set
-  - Required fields: reps, weight, duration, distance, date, exercise_id, workout_id, user_id
-- `PUT /Set/{id}` - Update set
-  - All fields required
-- `DELETE /Set/{id}` - Delete set
-
 ### Exercises
-- `GET /Exercise` - Get all exercises (with pagination)
-- `GET /Exercise/{id}` - Get specific exercise
+- `GET /Exercise` - Get paginated list of exercises
+- `GET /Exercise/{id}` - Get exercise by ID
 - `POST /Exercise` - Create new exercise
-  - Required fields: name, description
 - `PUT /Exercise/{id}` - Update exercise
-  - All fields required
 - `DELETE /Exercise/{id}` - Delete exercise
 
 ### Users
-- `GET /User` - Get all users (with pagination)
-- `GET /User/{id}` - Get specific user
-- `POST /User` - Create new user
-  - Required fields: name, email
-- `PUT /User/{id}` - Update user
-  - All fields required
-- `DELETE /User/{id}` - Delete user
+- `GET /User` - Get paginated list of users
+- `GET /User/{id}` - Get user by ID
+- `POST /User` - Create new user with initial metrics
+- `PUT /User/{id}` - Update user details
+
+## Development
+
+### Prerequisites
+- Python 3.10+
+- SQLite3
+- FastAPI
+- SQLAlchemy
+
+### Setup
+1. Clone the repository
+2. Create virtual environment: `python -m venv venv`
+3. Activate virtual environment:
+   - Windows: `venv\Scripts\activate`
+   - Unix: `source venv/bin/activate`
+4. Install dependencies: `pip install -r requirements.txt`
+5. Run development server: `uvicorn app.main:app --reload`
+
+### Testing
+Run tests with pytest:

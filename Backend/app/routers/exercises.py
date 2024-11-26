@@ -21,6 +21,8 @@ async def get_exercises(query_params: Annotated[schemas.ExerciseQuery, Depends(s
 @router.get("/{id}", response_model=schemas.Exercise)
 async def get_exercise(id: int = Path(gt=0), db: Session = Depends(get_db)):
     exercise = db.query(models.Exercise).filter(models.Exercise.id == id).first()
+
+    # Ensure exercise exists.
     if exercise is None:
         raise HTTPException(status_code=404, detail=f"No Exercise With Id {id} Exists.")
 
@@ -49,6 +51,7 @@ async def update_exercise(model_to_update: schemas.CreateExercise, id: int = Pat
     query = db.query(models.Exercise).filter(models.Exercise.id == id)
     exercise_to_update = query.first()
 
+    # Ensure exercise exists.
     if exercise_to_update is None:
         raise HTTPException(status_code=404, detail=f"No Exercise With Id {id} Exists.")
 
