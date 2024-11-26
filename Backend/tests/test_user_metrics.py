@@ -63,7 +63,7 @@ def test_user_metrics_history(client: TestClient, generate_users: list[schemas.U
     assert response.status_code == 200
     metrics_list = [schemas.UserMetricsReply(**m) for m in response.json()]
 
-    assert len(metrics_list) == 5
+    assert len(metrics_list) == 6
 
 
 def test_invalid_user_metrics(client: TestClient):

@@ -4,7 +4,7 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { catchError, tap } from 'rxjs/operators';
 
-import { UserQueryParams, WorkoutQueryParams, SetQueryParams, ExerciseQueryParams, CreateSet, UpdateWorkout, UserMetrics, UserMetricsReply } from './kratos-api-types';
+import { UserQueryParams, SetQueryParams, ExerciseQueryParams, CreateSet, UpdateWorkout, UserMetrics, UserMetricsReply, GetQueryParams } from './kratos-api-types';
 import { User, UserReply, Workout, WorkoutReply, Set, SetReply, Exercise } from './kratos-api-types';
 
 import { KratosErrorHandler } from './kratos-error-handler';
@@ -116,15 +116,23 @@ export class KratosServiceService {
       );
   }
 
-  getWorkouts(queryParams: WorkoutQueryParams): Observable<WorkoutReply[]> {
+  getWorkouts(queryParams: GetQueryParams): Observable<WorkoutReply[]> {
     const params = new HttpParams({ fromObject: queryParams });
     var config = {
       headers: this.httpOptions.headers,
       params: params
     }
-    return this.http.get<WorkoutReply[]>(`${this.backendEndpoint}${this.workoutEndpoint}`, config)
+    return this.http.get<WorkoutReply[]>(`${this.backendEndpoint}${this.workoutEndpoint}/workouts/`, config)
       .pipe(
         tap(_ => console.log(`Workouts Retrieved`)),
+        catchError((error: HttpErrorResponse) => this.kratosErrorHandler.handleError(error)),
+      );
+  }
+
+  getLatestWorkouts(userId: number): Observable<WorkoutReply[]> {
+    return this.http.get<WorkoutReply[]>(`${this.backendEndpoint}${this.workoutEndpoint}/workouts/${userId}`, this.httpOptions)
+      .pipe(
+        tap(_ => console.log(`Latest Workouts Retrieved`)),
         catchError((error: HttpErrorResponse) => this.kratosErrorHandler.handleError(error)),
       );
   }
@@ -145,13 +153,6 @@ export class KratosServiceService {
         tap(_ => console.log(`Workout Deleted`)),
         catchError((error: HttpErrorResponse) => this.kratosErrorHandler.handleError(error)),
       );
-  }
-
-  getLatestWorkout(): Observable<WorkoutReply[]> {
-    const params: WorkoutQueryParams = {
-      latest: true
-    };
-    return this.getWorkouts(params);
   }
   //#endregion
 

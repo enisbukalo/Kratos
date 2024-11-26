@@ -70,9 +70,9 @@ export class DashboardComponent {
 
   ngOnInit(): void {
     this.userState.currentUser$.subscribe(user => {
-      if (user) {
+      if (user?.id) {
         this.currentUser = user;
-        this.apiService.getLatestWorkout().subscribe(latestWorkouts => {
+        this.apiService.getLatestWorkouts(user.id).subscribe(latestWorkouts => {
           this.currentUsersWorkouts = latestWorkouts;
           const allSets = latestWorkouts
             ? latestWorkouts.flatMap(workout => workout.sets || [])
@@ -123,7 +123,7 @@ export class DashboardComponent {
           this.cookieService.set('currentUser', JSON.stringify(user));
 
           // Get latest workouts
-          this.apiService.getLatestWorkout().subscribe(latestWorkouts => {
+          this.apiService.getLatestWorkouts(parsedUser.id).subscribe(latestWorkouts => {
             this.currentUsersWorkouts = latestWorkouts;
             const allSets = latestWorkouts
               ? latestWorkouts.flatMap(workout => workout.sets || [])

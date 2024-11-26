@@ -6,9 +6,6 @@ export type GetQueryParams = {
 }
 
 export type UserQueryParams = GetQueryParams & {}
-export type WorkoutQueryParams = GetQueryParams & {
-    latest?: boolean
-}
 export type ExerciseQueryParams = GetQueryParams & {}
 export type SetQueryParams = GetQueryParams & {}
 //#endregion

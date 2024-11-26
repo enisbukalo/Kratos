@@ -12,21 +12,30 @@ models.BASE.metadata.create_all(bind=engine)
 router = APIRouter(prefix="/Workout", tags=["Workout"])
 
 
-@router.get("", response_model=list[schemas.WorkoutReply])
-async def get_workouts(query_params: Annotated[schemas.WorkoutQuery, Depends(schemas.WorkoutQuery)], db: Session = Depends(get_db)):
+@router.get("/workouts/", response_model=list[schemas.WorkoutReply])
+async def get_workouts(query_params: Annotated[schemas.GetQueryParams, Depends(schemas.GetQueryParams)], db: Session = Depends(get_db)):
     query = db.query(models.Workout)
 
-    if query_params.latest:
-        latest_workout = query.order_by(models.Workout.started_at.desc()).first()
-        return [latest_workout] if latest_workout else []
-
-    workouts = (
+    return (
         query.order_by(models.Workout.started_at.desc())
         .limit(query_params.page_size)
         .offset((query_params.page_number * query_params.page_size) if query_params.page_number > 1 else 0)
         .all()
     )
-    return workouts if workouts else []
+
+
+@router.get("/workouts/{user_id}", response_model=list[schemas.WorkoutReply])
+async def get_latest_workouts_for_user(user_id: int = Path(gt=0), db: Session = Depends(get_db)):
+    query = db.query(models.Workout)
+
+    # Get all of the workouts for this user.
+    query = query.filter(models.Workout.user_id == user_id)
+
+    # Parse all of the workouts for uniquely named workouts.
+    unique_workouts = {workout.name: workout for workout in query.all()}
+
+    # Query the database for the latest workout for each unique named workout.
+    return [workout for workout in unique_workouts.values()]
 
 
 @router.get("/{id}", response_model=schemas.WorkoutReply)

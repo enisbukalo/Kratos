@@ -1,3 +1,5 @@
+from dataclasses import dataclass
+from fastapi import Query
 from pydantic import BaseModel, ConfigDict, Field, PositiveInt
 from datetime import datetime
 
@@ -35,8 +37,9 @@ class UpdateWorkout(BaseModel):
     name: str | None = None
 
 
+@dataclass
 class WorkoutQuery(GetQueryParams):
-    latest: bool = Field(default=False, description="Get only the latest workout by started_at")
+    user_id: int = Query(gt=0, description="Get workouts for specific user")
 
 
 from .sets import ExerciseSet
