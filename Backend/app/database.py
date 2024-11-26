@@ -1,5 +1,5 @@
 from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker, Session, declarative_base
+from sqlalchemy.orm import sessionmaker, declarative_base
 from sqlalchemy.orm.session import close_all_sessions
 
 SQLALCHEMY_DATABASE_URL = "sqlite:///./Kratos_App.db"

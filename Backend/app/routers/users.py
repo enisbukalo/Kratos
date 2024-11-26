@@ -37,6 +37,7 @@ async def create_user(model_to_create: schemas.CreateUser, db: Session = Depends
     db.commit()
     db.refresh(created_model)
 
+    # Create a new user metric for the user.
     new_user_metric = models.UserMetrics(
         user_id=created_model.id, weight=created_model.weight, height=created_model.height, recorded_at=datetime.now()
     )
@@ -58,9 +59,11 @@ async def update_user(model_to_update: schemas.CreateUser, id: int = Path(gt=0),
     query = db.query(models.User).filter(models.User.id == id)
     user_to_update = query.first()
 
+    # Ensure that the user exists.
     if user_to_update is None:
         raise HTTPException(status_code=404, detail=f"No User With Id {id} Exists.")
 
+    # Update the user with the new data.
     query.update(model_to_update.model_dump(), synchronize_session=False)
     db.commit()
     db.refresh(user_to_update)
@@ -71,9 +74,12 @@ async def update_user(model_to_update: schemas.CreateUser, id: int = Path(gt=0),
 @router.post("/{user_id}/metrics", response_model=schemas.UserMetricsReply)
 async def create_user_metrics(user_id: int = Path(gt=0), metrics: schemas.UserMetricsCreate = None, db: Session = Depends(get_db)):
     user = db.query(models.User).filter(models.User.id == user_id).first()
+
+    # Ensure that the user exists.
     if not user:
         raise HTTPException(status_code=404, detail=f"No User With Id {user_id} Exists.")
 
+    # Create a new user metric for the user.
     db_metrics = models.UserMetrics(user_id=user_id, weight=metrics.weight, height=metrics.height, recorded_at=datetime.now())
 
     db.add(db_metrics)
