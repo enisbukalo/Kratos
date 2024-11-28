@@ -9,6 +9,7 @@ A FastAPI-based backend service for tracking workouts, exercises, and user fitne
   - Record exercise sets within workouts
   - Get latest workouts by user
   - Filter workouts by name and date
+  - Bulk update exercise sets
 
 - **Exercise Library**
   - Maintain a database of exercises
@@ -19,6 +20,7 @@ A FastAPI-based backend service for tracking workouts, exercises, and user fitne
   - User profiles with height/weight tracking
   - Historical fitness metrics
   - Workout history per user
+  - Track user metrics over time
 
 ## API Endpoints
 
@@ -37,11 +39,20 @@ A FastAPI-based backend service for tracking workouts, exercises, and user fitne
 - `PUT /Exercise/{id}` - Update exercise
 - `DELETE /Exercise/{id}` - Delete exercise
 
+### Sets
+- `POST /Set` - Create new exercise set
+- `POST /Set/bulk` - Create multiple exercise sets
+- `PUT /Set/{id}` - Update exercise set
+- `PUT /Set/bulk` - Bulk update exercise sets
+- `DELETE /Set/{id}` - Delete exercise set
+
 ### Users
 - `GET /User` - Get paginated list of users
 - `GET /User/{id}` - Get user by ID
 - `POST /User` - Create new user with initial metrics
 - `PUT /User/{id}` - Update user details
+- `POST /User/{id}/metrics` - Record new user metrics
+- `GET /User/{id}/metrics` - Get user metrics history
 
 ## Development
 
@@ -52,13 +63,23 @@ A FastAPI-based backend service for tracking workouts, exercises, and user fitne
 - SQLAlchemy
 
 ### Setup
+#### Local
 1. Clone the repository
 2. Create virtual environment: `python -m venv venv`
 3. Activate virtual environment:
    - Windows: `venv\Scripts\activate`
    - Unix: `source venv/bin/activate`
 4. Install dependencies: `pip install -r requirements.txt`
-5. Run development server: `uvicorn app.main:app --reload`
+5. Run Backend: `python app/main.py --port 9599` (From The Backend Directory)
+6. Run Frontend: `ng serve --port 9598` (From The Frontend Directory)
+7. Navigate to `http://localhost:9598` For The Web App.
+8. Navigate to `http://localhost:9599/docs` For The API Documentation.
+
+#### Docker
+1. Clone the repository
+2. Run `docker compose up --build`
+3. Navigate to `http://localhost:9598` For The Web App.
+4. Navigate to `http://localhost:9599/docs` For The API Documentation.
 
 ### Testing
 Run tests with pytest:

@@ -5,6 +5,16 @@ entity User {
   * id: integer <<generated>>
   * name: string
   * email: string
+  weight: float
+  height: float
+}
+
+entity UserMetrics {
+  * id: integer <<generated>>
+  * user_id: integer <<FK>>
+  * weight: float
+  * height: float
+  * recorded_at: datetime <<generated>>
 }
 
 entity Workout {
@@ -32,6 +42,7 @@ entity ExerciseSet {
   * user_id: integer <<FK>>
 }
 
+User ||--o{ UserMetrics
 User ||--o{ Workout
 User ||--o{ ExerciseSet
 Workout ||--o{ ExerciseSet
