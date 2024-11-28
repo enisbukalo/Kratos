@@ -3,7 +3,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { MaterialModule } from '../material.module';
 import { KratosServiceService } from '../kratos-service.service';
-import { WorkoutReply, Set, Workout, CreateWorkout, CreateSet } from '../kratos-api-types';
+import { WorkoutReply, Set, Workout, CreateWorkout, CreateSet, CreateSets } from '../kratos-api-types';
 import { SidebarComponent } from '../sidebar/sidebar.component';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { NewSetDialogComponent } from '../new-set-dialog/new-set-dialog.component';
@@ -166,44 +166,65 @@ export class WorkoutComponent implements OnInit {
    * Starts a new workout based on the current workout template
    */
   startWorkout(): void {
-    if (!this.workout || this.isWorkoutMode) return;
+    if (!this.workout?.id || !this.workout?.name || this.isWorkoutMode) return;
 
     const newWorkout: CreateWorkout = {
-      name: `${this.workout.name}`,
+      name: this.workout.name as string,
       user_id: this.userState.getCurrentUserId(),
     };
 
     this.apiService.createWorkout(newWorkout).subscribe(createdWorkout => {
-      const newSets = this.sets.map(set => ({
-        exercise_id: set.exercise?.id,
-        workout_id: createdWorkout.id,
-        user_id: this.userState.getCurrentUserId(),
-        weight: set.weight,
-        reps: set.reps,
-        duration: set.duration,
-        distance: set.distance,
-        date: new Date().toISOString().split('T')[0]
-      }));
+      const workoutId = createdWorkout.id;
+      if (typeof workoutId !== 'number') return;
 
-      const createSetObservables = newSets.map(set =>
-        this.apiService.createSet(set)
-      );
+      const groupedByExercise = this.sets.reduce((acc: { [key: number]: any[] }, set) => {
+        const exerciseId = set.exercise?.id;
+        if (typeof exerciseId !== 'number') return acc;
 
-      forkJoin(createSetObservables).subscribe(createdSets => {
-        this.workout = createdWorkout;
-        this.sets = createdSets;
-        this.workoutSets = createdSets.map(set => ({
-          ...set,
-          isEditing: false,
-          originalValues: {
-            weight: set.weight || 0,
-            reps: set.reps || 0,
-            duration: set.duration || 0,
-            distance: set.distance || 0
-          }
-        }));
-        this.groupedSets = this.groupSetsByExercise(this.sets);
-        this.isWorkoutMode = true;
+        if (!acc[exerciseId]) {
+          acc[exerciseId] = [];
+        }
+        acc[exerciseId].push({
+          reps: set.reps || 0,
+          weight: set.weight || 0,
+          duration: set.duration || 0,
+          distance: set.distance || 0,
+          date: new Date().toISOString().split('T')[0]
+        });
+        return acc;
+      }, {});
+
+      const createSetsObservables = Object.entries(groupedByExercise).map(([exerciseId, sets]) => {
+        const createSetsPayload: CreateSets = {
+          exercise_id: parseInt(exerciseId),
+          workout_id: workoutId,
+          user_id: this.userState.getCurrentUserId(),
+          sets: sets
+        };
+        return this.apiService.createSets(createSetsPayload);
+      });
+
+      forkJoin(createSetsObservables).subscribe({
+        next: (createdSetsArrays) => {
+          const allCreatedSets = createdSetsArrays.flat();
+          this.workout = createdWorkout;
+          this.sets = allCreatedSets;
+          this.workoutSets = allCreatedSets.map(set => ({
+            ...set,
+            isEditing: false,
+            originalValues: {
+              weight: set.weight || 0,
+              reps: set.reps || 0,
+              duration: set.duration || 0,
+              distance: set.distance || 0
+            }
+          }));
+          this.groupedSets = this.groupSetsByExercise(this.sets);
+          this.isWorkoutMode = true;
+        },
+        error: (error) => {
+          console.error('Error creating sets:', error);
+        }
       });
     });
   }

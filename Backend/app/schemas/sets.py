@@ -61,6 +61,22 @@ class CreateSets(BaseModel):
     sets: list[MultiSets]
 
 
+class UpdateSet(BaseModel):
+    id: int
+    reps: int | None = None
+    weight: float | None = None
+    duration: int | None = None
+    distance: float | None = None
+    date: _date | None = None
+
+
+class BulkUpdateSets(BaseModel):
+    exercise_id: PositiveInt
+    workout_id: PositiveInt
+    user_id: PositiveInt
+    sets: list[UpdateSet]
+
+
 class SetQuery(GetQueryParams):
     pass
 
