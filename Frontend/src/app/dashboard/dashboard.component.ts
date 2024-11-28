@@ -15,6 +15,9 @@ import { MatDialog } from '@angular/material/dialog';
 import { NewWorkoutDialogComponent } from '../new-workout-dialog/new-workout-dialog.component';
 import { UserStateService } from '../services/user-state.service';
 import { NewMetricDialogComponent } from '../new-metric-dialog/new-metric-dialog.component';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { FormsModule } from '@angular/forms';
 
 /**
  * Main dashboard component that displays workout summaries and statistics.
@@ -31,7 +34,10 @@ import { NewMetricDialogComponent } from '../new-metric-dialog/new-metric-dialog
     ChartModule,
     CardModule,
     MaterialModule,
-    SidebarComponent
+    SidebarComponent,
+    MatFormFieldModule,
+    MatInputModule,
+    FormsModule
   ],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.scss',
@@ -41,7 +47,7 @@ export class DashboardComponent {
   router = inject(Router);
   dialog = inject(MatDialog);
 
-  currentUser: UserReply;
+  currentUser!: UserReply;
   currentUsersWorkouts?: WorkoutReply[] = [];
   currentUsersExercises?: Set[] = [];
   sidebarVisible: boolean = false;
@@ -51,6 +57,8 @@ export class DashboardComponent {
   workouts: Workout[] = [];
   weightChart: any;
   weightMetrics: any[] = [];
+  isEditingName: boolean = false;
+  editableName: string = '';
 
   constructor(
     private apiService: KratosServiceService,
@@ -207,5 +215,37 @@ export class DashboardComponent {
         this.loadWeightMetrics();
       }
     });
+  }
+
+  startEditingName(): void {
+    this.editableName = this.currentUser?.name ?? '';
+    this.isEditingName = true;
+  }
+
+  saveName(): void {
+    if (!this.editableName?.trim() || !this.currentUser?.id) return;
+
+    const updateUserPayload = {
+      name: this.editableName,
+      weight: this.currentUser?.weight ?? 0,
+      height: this.currentUser?.height ?? 0
+    };
+
+    this.apiService.updateUser(this.currentUser.id, updateUserPayload).subscribe({
+      next: (updatedUser) => {
+        this.currentUser = updatedUser;
+        this.isEditingName = false;
+        this.cookieService.set('currentUser', JSON.stringify(updatedUser));
+      },
+      error: (error) => {
+        console.error('Error updating user name:', error);
+        this.isEditingName = false;
+      }
+    });
+  }
+
+  cancelEditName(): void {
+    this.isEditingName = false;
+    this.editableName = this.currentUser?.name ?? '';
   }
 }

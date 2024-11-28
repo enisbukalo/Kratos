@@ -5,7 +5,23 @@
         <button mat-icon-button (click)="sidebar.toggle()">
             <mat-icon>menu</mat-icon>
         </button>
-        <h1>{{currentUser.name}}</h1>
+        <div class="user-info">
+            <div class="user-name" *ngIf="!isEditingName" (click)="startEditingName()">
+                {{currentUser?.name}}
+            </div>
+            <div class="user-name-edit" *ngIf="isEditingName">
+                <mat-form-field appearance="outline" class="name-input">
+                    <input matInput [(ngModel)]="editableName" (keyup.enter)="saveName()"
+                        (keyup.escape)="cancelEditName()" #nameInput>
+                </mat-form-field>
+                <button mat-icon-button color="primary" (click)="saveName()">
+                    <mat-icon>check</mat-icon>
+                </button>
+                <button mat-icon-button color="warn" (click)="cancelEditName()">
+                    <mat-icon>close</mat-icon>
+                </button>
+            </div>
+        </div>
     </mat-toolbar>
 
     <div class="dashboard-content">
