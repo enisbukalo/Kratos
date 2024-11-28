@@ -24,7 +24,7 @@ async def get_set(id: int = Path(gt=0), db: Session = Depends(get_db)):
 
     # Ensure set exists.
     if retrieved_set is None:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"No Set With Id {id} Exists.")
+        raise HTTPException(status_code=status.HTTP_204_NO_CONTENT, detail=f"No Set With Id {id} Exists.")
 
     return retrieved_set
 

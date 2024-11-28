@@ -24,7 +24,7 @@ async def get_exercise(id: int = Path(gt=0), db: Session = Depends(get_db)):
 
     # Ensure exercise exists.
     if exercise is None:
-        raise HTTPException(status.HTTP_404_NOT_FOUND, detail=f"No Exercise With Id {id} Exists.")
+        raise HTTPException(status.HTTP_204_NO_CONTENT, detail=f"No Exercise With Id {id} Exists.")
 
     return exercise
 

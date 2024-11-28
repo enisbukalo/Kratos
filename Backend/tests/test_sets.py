@@ -3,6 +3,7 @@ import random
 from datetime import datetime, timedelta, date
 
 from fastapi.testclient import TestClient
+from fastapi import status
 from app import schemas
 
 STRING_LENGTH = 15
@@ -17,7 +18,7 @@ def test_get_sets(client: TestClient, generate_sets: list[schemas.SetReply]):
 
     for id in ids:
         response = client.get(f"/Set/{id}")
-        assert response.status_code == 200
+        assert response.status_code == status.HTTP_200_OK
         assert schemas.SetReply(**response.json()) in generate_sets
 
     response = client.get(f"/Set?page_size=100&page_number=1")
@@ -28,10 +29,10 @@ def test_get_sets(client: TestClient, generate_sets: list[schemas.SetReply]):
 def test_delete_sets(client: TestClient, generate_sets: list[schemas.SetReply]):
     for set in generate_sets:
         response = client.delete(f"/Set/{set.id}")
-        assert response.status_code == 200
+        assert response.status_code == status.HTTP_200_OK
 
         response = client.get(f"/Set/{set.id}")
-        assert response.status_code == 404
+        assert response.status_code == status.HTTP_204_NO_CONTENT
 
     response = client.get(f"/Set?page_size=100&page_number=1")
     assert len(response.json()) == 0
@@ -58,7 +59,7 @@ def test_update_sets(client: TestClient, generate_sets: list[schemas.SetReply]):
                 "user_id": set.user.id,
             },
         )
-        assert response.status_code == 200
+        assert response.status_code == status.HTTP_200_OK
 
         new_set = schemas.ExerciseSet(**response.json())
         assert new_set.id == set.id
@@ -86,7 +87,7 @@ def test_create_sets_success(client, generate_exercises, generate_workouts, gene
     }
 
     response = client.post("/Set/bulk", json=sets_data)
-    assert response.status_code == 200
+    assert response.status_code == status.HTTP_200_OK
 
     created_sets = response.json()
     assert len(created_sets) == 2
@@ -118,7 +119,7 @@ def test_create_sets_invalid_exercise(client, generate_workouts, generate_users)
     }
 
     response = client.post("/Set/bulk", json=sets_data)
-    assert response.status_code == 404
+    assert response.status_code == status.HTTP_404_NOT_FOUND
     assert "No Exercise With Id" in response.json()["detail"]
 
 
@@ -134,7 +135,7 @@ def test_create_sets_invalid_workout(client, generate_exercises, generate_users)
     }
 
     response = client.post("/Set/bulk", json=sets_data)
-    assert response.status_code == 404
+    assert response.status_code == status.HTTP_404_NOT_FOUND
     assert "No Workout With Id" in response.json()["detail"]
 
 
@@ -150,7 +151,7 @@ def test_create_sets_invalid_user(client, generate_exercises, generate_workouts)
     }
 
     response = client.post("/Set/bulk", json=sets_data)
-    assert response.status_code == 404
+    assert response.status_code == status.HTTP_404_NOT_FOUND
     assert "No User With Id" in response.json()["detail"]
 
 
@@ -162,7 +163,7 @@ def test_create_sets_empty_sets_list(client, generate_exercises, generate_workou
     sets_data = {"exercise_id": exercise.id, "workout_id": workout.id, "user_id": user.id, "sets": []}
 
     response = client.post("/Set/bulk", json=sets_data)
-    assert response.status_code == 200
+    assert response.status_code == status.HTTP_200_OK
     assert response.json() == []
 
 
@@ -184,7 +185,7 @@ def test_bulk_update_sets(client, generate_users, generate_workouts, generate_ex
     }
 
     response = client.post("/Set/bulk", json=create_sets_data)
-    assert response.status_code == 200
+    assert response.status_code == status.HTTP_200_OK
     created_sets = [schemas.SetReply(**s) for s in response.json()]
     assert len(created_sets) == 2
 
@@ -201,7 +202,7 @@ def test_bulk_update_sets(client, generate_users, generate_workouts, generate_ex
 
     # Update the sets
     response = client.put("/Set/bulk", json=update_sets_data)
-    assert response.status_code == 200
+    assert response.status_code == status.HTTP_200_OK
     updated_sets = response.json()
     assert len(updated_sets) == 2
 
