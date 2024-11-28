@@ -1,6 +1,6 @@
 from typing_extensions import Annotated
 
-from fastapi import APIRouter, Depends, Path, HTTPException
+from fastapi import APIRouter, Depends, Path, HTTPException, status
 from sqlalchemy.orm import Session
 
 from app import models, schemas
@@ -24,7 +24,7 @@ async def get_exercise(id: int = Path(gt=0), db: Session = Depends(get_db)):
 
     # Ensure exercise exists.
     if exercise is None:
-        raise HTTPException(status_code=404, detail=f"No Exercise With Id {id} Exists.")
+        raise HTTPException(status.HTTP_404_NOT_FOUND, detail=f"No Exercise With Id {id} Exists.")
 
     return exercise
 
@@ -53,7 +53,7 @@ async def update_exercise(model_to_update: schemas.CreateExercise, id: int = Pat
 
     # Ensure exercise exists.
     if exercise_to_update is None:
-        raise HTTPException(status_code=404, detail=f"No Exercise With Id {id} Exists.")
+        raise HTTPException(status.HTTP_404_NOT_FOUND, detail=f"No Exercise With Id {id} Exists.")
 
     query.update(model_to_update.model_dump(), synchronize_session=False)
     db.commit()

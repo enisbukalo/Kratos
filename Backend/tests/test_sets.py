@@ -1,7 +1,6 @@
-import string
 import random
 
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, date
 
 from fastapi.testclient import TestClient
 from app import schemas
@@ -68,3 +67,100 @@ def test_update_sets(client: TestClient, generate_sets: list[schemas.SetReply]):
         assert new_set.duration == new_duration
         assert new_set.distance == new_distance
         assert new_set.date.isoformat() == new_date
+
+
+def test_create_sets_success(client, generate_exercises, generate_workouts, generate_users):
+    # Get random test data from fixtures
+    exercise = random.choice(generate_exercises)
+    workout = random.choice(generate_workouts)
+    user = random.choice(generate_users)
+
+    sets_data = {
+        "exercise_id": exercise.id,
+        "workout_id": workout.id,
+        "user_id": user.id,
+        "sets": [
+            {"reps": 5, "weight": 100.0, "duration": 0, "distance": 0.0, "date": str(date.today())},
+            {"reps": 5, "weight": 102.5, "duration": 0, "distance": 0.0, "date": str(date.today())},
+        ],
+    }
+
+    response = client.post("/Set/bulk", json=sets_data)
+    assert response.status_code == 200
+
+    created_sets = response.json()
+    assert len(created_sets) == 2
+
+    # Verify first set
+    assert created_sets[0]["reps"] == 5
+    assert created_sets[0]["weight"] == 100.0
+    assert created_sets[0]["exercise"]["id"] == exercise.id
+    assert created_sets[0]["workout"]["id"] == workout.id
+    assert created_sets[0]["user"]["id"] == user.id
+
+    # Verify second set
+    assert created_sets[1]["reps"] == 5
+    assert created_sets[1]["weight"] == 102.5
+    assert created_sets[1]["exercise"]["id"] == exercise.id
+    assert created_sets[1]["workout"]["id"] == workout.id
+    assert created_sets[1]["user"]["id"] == user.id
+
+
+def test_create_sets_invalid_exercise(client, generate_workouts, generate_users):
+    workout = random.choice(generate_workouts)
+    user = random.choice(generate_users)
+
+    sets_data = {
+        "exercise_id": 99999,  # Non-existent exercise ID
+        "workout_id": workout.id,
+        "user_id": user.id,
+        "sets": [{"reps": 5, "weight": 100.0, "duration": 0, "distance": 0.0, "date": str(date.today())}],
+    }
+
+    response = client.post("/Set/bulk", json=sets_data)
+    assert response.status_code == 404
+    assert "No Exercise With Id" in response.json()["detail"]
+
+
+def test_create_sets_invalid_workout(client, generate_exercises, generate_users):
+    exercise = random.choice(generate_exercises)
+    user = random.choice(generate_users)
+
+    sets_data = {
+        "exercise_id": exercise.id,
+        "workout_id": 99999,  # Non-existent workout ID
+        "user_id": user.id,
+        "sets": [{"reps": 5, "weight": 100.0, "duration": 0, "distance": 0.0, "date": str(date.today())}],
+    }
+
+    response = client.post("/Set/bulk", json=sets_data)
+    assert response.status_code == 404
+    assert "No Workout With Id" in response.json()["detail"]
+
+
+def test_create_sets_invalid_user(client, generate_exercises, generate_workouts):
+    exercise = random.choice(generate_exercises)
+    workout = random.choice(generate_workouts)
+
+    sets_data = {
+        "exercise_id": exercise.id,
+        "workout_id": workout.id,
+        "user_id": 99999,  # Non-existent user ID
+        "sets": [{"reps": 5, "weight": 100.0, "duration": 0, "distance": 0.0, "date": str(date.today())}],
+    }
+
+    response = client.post("/Set/bulk", json=sets_data)
+    assert response.status_code == 404
+    assert "No User With Id" in response.json()["detail"]
+
+
+def test_create_sets_empty_sets_list(client, generate_exercises, generate_workouts, generate_users):
+    exercise = random.choice(generate_exercises)
+    workout = random.choice(generate_workouts)
+    user = random.choice(generate_users)
+
+    sets_data = {"exercise_id": exercise.id, "workout_id": workout.id, "user_id": user.id, "sets": []}
+
+    response = client.post("/Set/bulk", json=sets_data)
+    assert response.status_code == 200
+    assert response.json() == []

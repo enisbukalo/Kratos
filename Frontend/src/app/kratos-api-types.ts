@@ -113,5 +113,20 @@ export interface CreateSet {
     workout_id: number
     user_id: number
 }
+
+export interface MultiSets {
+    reps: number;
+    weight: number;
+    duration: number;
+    distance: number;
+    date: string;
+}
+
+export interface CreateSets {
+    exercise_id: number;
+    workout_id: number;
+    user_id: number;
+    sets: MultiSets[];
+}
 //#endregion
 

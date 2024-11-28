@@ -5,10 +5,9 @@ import { Observable } from 'rxjs';
 import { catchError, tap } from 'rxjs/operators';
 
 import { UserQueryParams, SetQueryParams, ExerciseQueryParams, CreateSet, UpdateWorkout, UserMetrics, UserMetricsReply, GetQueryParams } from './kratos-api-types';
-import { User, UserReply, Workout, WorkoutReply, Set, SetReply, Exercise } from './kratos-api-types';
+import { User, UserReply, Workout, WorkoutReply, CreateSets, Set, SetReply, Exercise } from './kratos-api-types';
 
 import { KratosErrorHandler } from './kratos-error-handler';
-import { environment } from '../environments/environment';
 
 @Injectable({ providedIn: 'root' })
 export class KratosServiceService {
@@ -162,6 +161,15 @@ export class KratosServiceService {
       .post<SetReply>(`${this.backendEndpoint}${this.setEndpoint}`, set, this.httpOptions)
       .pipe(
         tap(_ => console.log(`Set Created`)),
+        catchError((error: HttpErrorResponse) => this.kratosErrorHandler.handleError(error)),
+      );
+  }
+
+  createSets(sets: CreateSets): Observable<SetReply[]> {
+    return this.http
+      .post<SetReply[]>(`${this.backendEndpoint}${this.setEndpoint}/bulk`, sets, this.httpOptions)
+      .pipe(
+        tap(_ => console.log(`Sets Created`)),
         catchError((error: HttpErrorResponse) => this.kratosErrorHandler.handleError(error)),
       );
   }

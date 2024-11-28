@@ -1,6 +1,6 @@
 from typing_extensions import Annotated
 
-from fastapi import APIRouter, Depends, Path, HTTPException
+from fastapi import APIRouter, Depends, Path, HTTPException, status
 from sqlalchemy.orm import Session
 
 from app import models, schemas
@@ -41,7 +41,7 @@ async def get_latest_workouts_for_user(user_id: int = Path(gt=0), db: Session = 
 async def get_workout(id: int = Path(gt=0), db: Session = Depends(get_db)):
     workout = db.query(models.Workout).filter(models.Workout.id == id).first()
     if workout is None:
-        raise HTTPException(status_code=404, detail=f"No Workout With Id {id} Exists.")
+        raise HTTPException(status.HTTP_404_NOT_FOUND, detail=f"No Workout With Id {id} Exists.")
 
     return workout
 
@@ -69,7 +69,7 @@ async def update_workout(model_to_update: schemas.UpdateWorkout, id: int = Path(
 
     # Ensure that the workout exists.
     if workout_to_update is None:
-        raise HTTPException(status_code=404, detail=f"No Workout With Id {id} Exists.")
+        raise HTTPException(status.HTTP_404_NOT_FOUND, detail=f"No Workout With Id {id} Exists.")
 
     # Exclude any unset fields from the update data.
     update_data = model_to_update.model_dump(exclude_unset=True)

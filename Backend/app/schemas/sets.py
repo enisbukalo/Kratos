@@ -46,6 +46,21 @@ class CreateSet(BaseModel):
     user_id: PositiveInt
 
 
+class MultiSets(BaseModel):
+    reps: int = Field(default=5, ge=0)
+    weight: float = Field(default=0.0, ge=0.0)
+    duration: int = Field(default=0, ge=0)  # Duration in seconds
+    distance: float = Field(default=0.0, ge=0.0)
+    date: _date = Field(default=_date.today())
+
+
+class CreateSets(BaseModel):
+    exercise_id: PositiveInt
+    workout_id: PositiveInt
+    user_id: PositiveInt
+    sets: list[MultiSets]
+
+
 class SetQuery(GetQueryParams):
     pass
 

@@ -1,6 +1,6 @@
 from typing_extensions import Annotated
 
-from fastapi import APIRouter, Depends, Path, HTTPException
+from fastapi import APIRouter, Depends, Path, HTTPException, status
 from sqlalchemy.orm import Session
 from typing import List
 from datetime import datetime
@@ -24,7 +24,7 @@ async def get_users(query_params: Annotated[schemas.UserQuery, Depends(schemas.U
 async def get_user(id: int = Path(gt=0), db: Session = Depends(get_db)):
     user = db.query(models.User).filter(models.User.id == id).first()
     if user is None:
-        raise HTTPException(status_code=404, detail=f"No User With Id {id} Exists.")
+        raise HTTPException(status.HTTP_404_NOT_FOUND, detail=f"No User With Id {id} Exists.")
 
     return user
 
@@ -61,7 +61,7 @@ async def update_user(model_to_update: schemas.CreateUser, id: int = Path(gt=0),
 
     # Ensure that the user exists.
     if user_to_update is None:
-        raise HTTPException(status_code=404, detail=f"No User With Id {id} Exists.")
+        raise HTTPException(status.HTTP_404_NOT_FOUND, detail=f"No User With Id {id} Exists.")
 
     # Update the user with the new data.
     query.update(model_to_update.model_dump(), synchronize_session=False)
@@ -77,7 +77,7 @@ async def create_user_metrics(user_id: int = Path(gt=0), metrics: schemas.UserMe
 
     # Ensure that the user exists.
     if not user:
-        raise HTTPException(status_code=404, detail=f"No User With Id {user_id} Exists.")
+        raise HTTPException(status.HTTP_404_NOT_FOUND, detail=f"No User With Id {user_id} Exists.")
 
     # Create a new user metric for the user.
     db_metrics = models.UserMetrics(user_id=user_id, weight=metrics.weight, height=metrics.height, recorded_at=datetime.now())

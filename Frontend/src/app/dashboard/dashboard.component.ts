@@ -1,4 +1,4 @@
-import { Component, inject, Output, EventEmitter } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { KratosServiceService } from '../kratos-service.service';
 import { CookieService } from 'ngx-cookie-service';
 import { UserReply, WorkoutReply, Workout, Set } from '../kratos-api-types';
@@ -31,9 +31,7 @@ import { NewMetricDialogComponent } from '../new-metric-dialog/new-metric-dialog
     ChartModule,
     CardModule,
     MaterialModule,
-    SidebarComponent,
-    NewWorkoutDialogComponent,
-    NewMetricDialogComponent
+    SidebarComponent
   ],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.scss',

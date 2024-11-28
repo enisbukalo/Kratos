@@ -1,6 +1,6 @@
 from typing_extensions import Annotated
 
-from fastapi import APIRouter, Depends, Path, HTTPException
+from fastapi import APIRouter, Depends, Path, HTTPException, status
 from sqlalchemy.orm import Session
 
 from app import models, schemas
@@ -24,7 +24,7 @@ async def get_set(id: int = Path(gt=0), db: Session = Depends(get_db)):
 
     # Ensure set exists.
     if retrieved_set is None:
-        raise HTTPException(status_code=404, detail=f"No Set With Id {id} Exists.")
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"No Set With Id {id} Exists.")
 
     return retrieved_set
 
@@ -35,17 +35,17 @@ async def create_set(model_to_create: schemas.CreateSet, db: Session = Depends(g
 
     # Ensure exercise exists.
     if exercise is None:
-        raise HTTPException(status_code=404, detail=f"No Exercise With Id {model_to_create.exercise_id} Exists.")
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"No Exercise With Id {model_to_create.exercise_id} Exists.")
 
     # Ensure workout exists.
     workout = db.query(models.Workout).filter(models.Workout.id == model_to_create.workout_id).first()
     if workout is None:
-        raise HTTPException(status_code=404, detail=f"No Workout With Id {model_to_create.workout_id} Exists.")
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"No Workout With Id {model_to_create.workout_id} Exists.")
 
     # Ensure user exists.
     user = db.query(models.User).filter(models.User.id == model_to_create.user_id).first()
     if user is None:
-        raise HTTPException(status_code=404, detail=f"No User With Id {model_to_create.user_id} Exists.")
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"No User With Id {model_to_create.user_id} Exists.")
 
     created_model = models.ExerciseSet(**model_to_create.model_dump())
 
@@ -54,6 +54,41 @@ async def create_set(model_to_create: schemas.CreateSet, db: Session = Depends(g
     db.refresh(created_model)
 
     return created_model
+
+
+@router.post("/bulk", response_model=list[schemas.SetReply])
+async def create_sets(models_to_create: schemas.CreateSets, db: Session = Depends(get_db)):
+    created_sets = []
+
+    # Validate exercise exists - do this once for all sets
+    exercise = db.query(models.Exercise).filter(models.Exercise.id == models_to_create.exercise_id).first()
+    if exercise is None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"No Exercise With Id {models_to_create.exercise_id} Exists.")
+
+    # Validate workout exists - do this once for all sets
+    workout = db.query(models.Workout).filter(models.Workout.id == models_to_create.workout_id).first()
+    if workout is None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"No Workout With Id {models_to_create.workout_id} Exists.")
+
+    # Validate user exists - do this once for all sets
+    user = db.query(models.User).filter(models.User.id == models_to_create.user_id).first()
+    if user is None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"No User With Id {models_to_create.user_id} Exists.")
+
+    for set_data in models_to_create.sets:
+        # Combine the set-specific data with the common IDs
+        set_dict = set_data.model_dump()
+        set_dict.update({"exercise_id": models_to_create.exercise_id, "workout_id": models_to_create.workout_id, "user_id": models_to_create.user_id})
+
+        created_model = models.ExerciseSet(**set_dict)
+        db.add(created_model)
+        created_sets.append(created_model)
+
+    db.commit()
+    for set_model in created_sets:
+        db.refresh(set_model)
+
+    return created_sets
 
 
 @router.delete("/{id}")
@@ -68,25 +103,25 @@ async def update_set(model_to_update: schemas.CreateSet, id: int = Path(gt=0), d
 
     # Ensure exercise exists.
     if exercise is None:
-        raise HTTPException(status_code=404, detail=f"No Exercise With Id {model_to_update.exercise_id} Exists.")
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"No Exercise With Id {model_to_update.exercise_id} Exists.")
 
     workout = db.query(models.Workout).filter(models.Workout.id == model_to_update.workout_id).first()
 
     # Ensure workout exists.
     if workout is None:
-        raise HTTPException(status_code=404, detail=f"No Workout With Id {model_to_update.workout_id} Exists.")
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"No Workout With Id {model_to_update.workout_id} Exists.")
     user = db.query(models.User).filter(models.User.id == model_to_update.user_id).first()
 
     # Ensure user exists.
     if user is None:
-        raise HTTPException(status_code=404, detail=f"No User With Id {model_to_update.user_id} Exists.")
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"No User With Id {model_to_update.user_id} Exists.")
 
     query = db.query(models.ExerciseSet).filter(models.ExerciseSet.id == id)
     set_to_update = query.first()
 
     # Ensure set exists.
     if set_to_update is None:
-        raise HTTPException(status_code=404, detail=f"No Set With Id {id} Exists.")
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"No Set With Id {id} Exists.")
 
     query.update(model_to_update.model_dump(), synchronize_session=False)
     db.commit()

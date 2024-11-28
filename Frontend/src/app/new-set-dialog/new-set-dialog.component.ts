@@ -2,7 +2,7 @@ import { Component, Inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { Exercise, CreateSet } from '../kratos-api-types';
+import { Exercise, CreateSet, CreateSets } from '../kratos-api-types';
 import { KratosServiceService } from '../kratos-service.service';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialogModule } from '@angular/material/dialog';
@@ -11,7 +11,6 @@ import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatIconModule } from '@angular/material/icon';
 import { CookieService } from 'ngx-cookie-service';
-import { forkJoin } from 'rxjs';
 import { CreateExerciseDialogComponent } from '../create-exercise-dialog/create-exercise-dialog.component';
 import { MatDialog } from '@angular/material/dialog';
 
@@ -106,24 +105,24 @@ export class NewSetDialogComponent {
     if (this.selectedExercise?.id) {
       const today = new Date().toISOString().split('T')[0];
 
-      const setsToCreate = this.sets.map(set => ({
-        exercise_id: this.selectedExercise!.id,
+      // Create the CreateSets object with the required properties
+      const createSetsPayload: CreateSets = {
+        exercise_id: this.selectedExercise.id,
         workout_id: this.data.workoutId,
         user_id: this.currentUser.id,
-        reps: set.reps ?? 0,
-        weight: set.weight ?? 0,
-        duration: set.duration ?? 0,
-        distance: set.distance ?? 0,
-        date: today
-      }));
+        sets: this.sets.map(set => ({
+          reps: set.reps ?? 0,
+          weight: set.weight ?? 0,
+          duration: set.duration ?? 0,
+          distance: set.distance ?? 0,
+          date: today
+        }))
+      };
 
-      const createSetObservables = setsToCreate.map(set =>
-        this.apiService.createSet(set)
-      );
-
-      forkJoin(createSetObservables).subscribe({
-        next: (responses) => {
-          this.dialogRef.close(responses);
+      // Use a single API call to create all sets
+      this.apiService.createSets(createSetsPayload).subscribe({
+        next: (response) => {
+          this.dialogRef.close(response);
         },
         error: (error) => {
           console.error('Error creating sets:', error);
