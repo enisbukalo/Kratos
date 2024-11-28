@@ -76,7 +76,7 @@ export class NewSetDialogComponent {
       const previousSet = this.sets[this.sets.length - 1];
       const newSet: CreateSet = {
         reps: previousSet.reps,
-        weight: previousSet.weight,
+        weight: previousSet.weight + 5,
         duration: previousSet.duration,
         distance: previousSet.distance,
         date: new Date().toISOString().split('T')[0],
