@@ -3,7 +3,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { MaterialModule } from '../material.module';
 import { KratosServiceService } from '../kratos-service.service';
-import { WorkoutReply, Set, Workout, CreateWorkout, CreateSet, CreateSets } from '../kratos-api-types';
+import { WorkoutReply, Set, Workout, CreateWorkout, CreateSet, CreateSets, BulkUpdateSets } from '../kratos-api-types';
 import { SidebarComponent } from '../sidebar/sidebar.component';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { NewSetDialogComponent } from '../new-set-dialog/new-set-dialog.component';
@@ -230,31 +230,64 @@ export class WorkoutComponent implements OnInit {
   }
 
   /**
-   * Saves the current workout progress by updating all sets
+   * Saves the current workout progress by bulk updating all sets
    */
   saveWorkout(): void {
     if (!this.workout?.id) return;
 
-    const updateSetObservables = this.workoutSets
-      .filter(set => set.id !== undefined)
-      .map(set =>
-        this.apiService.updateSet(set.id!, {
-          exercise_id: set.exercise?.id || 0,
-          workout_id: this.workout?.id || 0,
-          user_id: this.userState.getCurrentUserId(),
-          weight: set.weight || 0,
-          reps: set.reps || 0,
-          duration: set.duration || 0,
-          distance: set.distance || 0,
+    // Group sets by exercise
+    const groupedByExercise = this.workoutSets.reduce((acc: { [key: number]: EditableSet[] }, set) => {
+      const exerciseId = set.exercise?.id;
+      if (typeof exerciseId !== 'number' || !set.id) return acc;
+
+      if (!acc[exerciseId]) {
+        acc[exerciseId] = [];
+      }
+      acc[exerciseId].push(set);
+      return acc;
+    }, {});
+
+    // Create bulk update requests for each exercise
+    const bulkUpdateObservables = Object.entries(groupedByExercise).map(([exerciseId, sets]) => {
+      const bulkUpdatePayload: BulkUpdateSets = {
+        exercise_id: parseInt(exerciseId),
+        workout_id: this.workout?.id || 0,
+        user_id: this.userState.getCurrentUserId(),
+        sets: sets.map(set => ({
+          id: set.id!,
+          weight: set.weight,
+          reps: set.reps,
+          duration: set.duration,
+          distance: set.distance,
           date: set.date || new Date().toISOString().split('T')[0]
-        })
-      );
+        }))
+      };
+      return this.apiService.updateSets(bulkUpdatePayload);
+    });
 
-    if (updateSetObservables.length === 0) return;
+    if (bulkUpdateObservables.length === 0) return;
 
-    forkJoin(updateSetObservables).subscribe(updatedSets => {
-      this.sets = updatedSets;
-      this.groupedSets = this.groupSetsByExercise(this.sets);
+    // Execute all bulk updates and update the UI
+    forkJoin(bulkUpdateObservables).subscribe({
+      next: (updatedSetsArrays) => {
+        // Flatten all updated sets into a single array
+        const allUpdatedSets = updatedSetsArrays.flat();
+        this.sets = allUpdatedSets;
+        this.workoutSets = allUpdatedSets.map(set => ({
+          ...set,
+          isEditing: false,
+          originalValues: {
+            weight: set.weight || 0,
+            reps: set.reps || 0,
+            duration: set.duration || 0,
+            distance: set.distance || 0
+          }
+        }));
+        this.groupedSets = this.groupSetsByExercise(this.sets);
+      },
+      error: (error) => {
+        console.error('Error updating sets:', error);
+      }
     });
   }
 
