@@ -56,13 +56,8 @@ A FastAPI-based backend service for tracking workouts, exercises, and user fitne
 
 ## Development
 
-### Prerequisites
-- Python 3.10+
-- SQLite3
-- FastAPI
-- SQLAlchemy
-
 ### Setup
+
 #### Local
 1. Clone the repository
 2. Create virtual environment: `python -m venv venv`
@@ -81,5 +76,7 @@ A FastAPI-based backend service for tracking workouts, exercises, and user fitne
 3. Navigate to `http://localhost:9598` For The Web App.
 4. Navigate to `http://localhost:9599/docs` For The API Documentation.
 
-### Testing
-Run tests with pytest:
+## Testing
+1. Navigate to the Backend Directory
+2. Run `pytest`
+
