@@ -1,0 +1,125 @@
+============================= test session starts =============================
+platform win32 -- Python 3.11.1, pytest-8.3.2, pluggy-1.5.0 -- C:\Users\Enis Bukalo\Documents\Venvs\Kratos\Scripts\python.exe
+cachedir: .pytest_cache
+rootdir: C:\Users\Enis Bukalo\Documents\GitHub\Kratos\Backend
+plugins: anyio-4.4.0, asyncio-0.23.8
+asyncio: mode=Mode.STRICT
+collecting ... collected 33 items
+
+tests/test_exercises.py::test_create_exercise PASSED                     [  3%]
+tests/test_exercises.py::test_get_exercises PASSED                       [  6%]
+tests/test_exercises.py::test_delete_exercises PASSED                    [  9%]
+tests/test_exercises.py::test_update_exercises PASSED                    [ 12%]
+tests/test_sets.py::test_create_set PASSED                               [ 15%]
+tests/test_sets.py::test_get_sets PASSED                                 [ 18%]
+tests/test_sets.py::test_delete_sets PASSED                              [ 21%]
+tests/test_sets.py::test_update_sets PASSED                              [ 24%]
+tests/test_sets.py::test_create_sets_success PASSED                      [ 27%]
+tests/test_sets.py::test_create_sets_invalid_exercise PASSED             [ 30%]
+tests/test_sets.py::test_create_sets_invalid_workout PASSED              [ 33%]
+tests/test_sets.py::test_create_sets_invalid_user PASSED                 [ 36%]
+tests/test_sets.py::test_create_sets_empty_sets_list PASSED              [ 39%]
+tests/test_sets.py::test_bulk_update_sets_success FAILED                 [ 42%]
+tests/test_sets.py::test_bulk_update_sets_invalid_exercise FAILED        [ 45%]
+tests/test_sets.py::test_bulk_update_sets_invalid_set_id FAILED          [ 48%]
+tests/test_user_metrics.py::test_create_user_metrics PASSED              [ 51%]
+tests/test_user_metrics.py::test_get_user_metrics PASSED                 [ 54%]
+tests/test_user_metrics.py::test_user_metrics_history PASSED             [ 57%]
+tests/test_user_metrics.py::test_invalid_user_metrics PASSED             [ 60%]
+tests/test_users.py::test_create_user PASSED                             [ 63%]
+tests/test_users.py::test_get_users PASSED                               [ 66%]
+tests/test_users.py::test_delete_users PASSED                            [ 69%]
+tests/test_users.py::test_update_users PASSED                            [ 72%]
+tests/test_users.py::test_user_metrics_history PASSED                    [ 75%]
+tests/test_utilities.py::test_reset_database PASSED                      [ 78%]
+tests/test_workouts.py::test_create_workout PASSED                       [ 81%]
+tests/test_workouts.py::test_get_workouts PASSED                         [ 84%]
+tests/test_workouts.py::test_get_workout_by_id PASSED                    [ 87%]
+tests/test_workouts.py::test_get_workout_not_found PASSED                [ 90%]
+tests/test_workouts.py::test_update_workout PASSED                       [ 93%]
+tests/test_workouts.py::test_delete_workout PASSED                       [ 96%]
+tests/test_workouts.py::test_get_latest_workouts_for_user PASSED         [100%]
+
+================================== FAILURES ===================================
+________________________ test_bulk_update_sets_success ________________________
+
+client = <starlette.testclient.TestClient object at 0x0000028FEC19AC50>
+generate_sets = [SetReply(id=1, reps=8, weight=73.03, duration=277, distance=0.0, date=datetime.date(2024, 11, 28), workout=Workout(id...IHPGCQWGUGKRMPSXVIELDEKILEL'), user=User(id=9, name='IJOLELXNZJXDORQSROQIFLFUQ', height=50.1902, weight=66.2818)), ...]
+
+    def test_bulk_update_sets_success(client, generate_sets):
+        # Get two sets to update
+        sets_to_update = generate_sets[:2]
+    
+        # Prepare update data
+        sets_data = {
+            "exercise_id": sets_to_update[0].exercise.id,
+            "workout_id": sets_to_update[0].workout.id,
+            "user_id": sets_to_update[0].user.id,
+            "sets": [
+                {"id": sets_to_update[0].id, "reps": 10, "weight": 150.0, "duration": 60, "distance": 100.0, "date": str(date.today())},
+                {"id": sets_to_update[1].id, "reps": 12, "weight": 160.0, "duration": 45, "distance": 0.0, "date": str(date.today())},
+            ],
+        }
+    
+        response = client.put("/Set/bulk", json=sets_data)
+>       assert response.status_code == 200
+E       assert 422 == 200
+E        +  where 422 = <Response [422 Unprocessable Entity]>.status_code
+
+tests\test_sets.py:185: AssertionError
+___________________ test_bulk_update_sets_invalid_exercise ____________________
+
+client = <starlette.testclient.TestClient object at 0x0000028FEAB72490>
+generate_sets = [SetReply(id=1, reps=2, weight=46.46, duration=31, distance=0.0, date=datetime.date(2024, 11, 28), workout=Workout(id=...OAFSOGXAYPQHIIBHNNUBNJGSMG'), user=User(id=7, name='LXRHDDGSYGAVFSAJQJUWDFLBU', height=28.8185, weight=151.8761)), ...]
+
+    def test_bulk_update_sets_invalid_exercise(client, generate_sets):
+        sets_to_update = generate_sets[:2]
+    
+        sets_data = {
+            "exercise_id": 99999,  # Non-existent exercise ID
+            "workout_id": sets_to_update[0].workout.id,
+            "user_id": sets_to_update[0].user.id,
+            "sets": [{"id": sets_to_update[0].id, "reps": 10, "weight": 150.0, "duration": 60, "distance": 100.0, "date": str(date.today())}],
+        }
+    
+        response = client.put("/Set/bulk", json=sets_data)
+>       assert response.status_code == 404
+E       assert 422 == 404
+E        +  where 422 = <Response [422 Unprocessable Entity]>.status_code
+
+tests\test_sets.py:216: AssertionError
+____________________ test_bulk_update_sets_invalid_set_id _____________________
+
+client = <starlette.testclient.TestClient object at 0x0000028FEAC3E790>
+generate_sets = [SetReply(id=1, reps=9, weight=66.17, duration=175, distance=0.0, date=datetime.date(2024, 11, 28), workout=Workout(id...RELWVFYKVRXYEWFNKIVYCXCZIML'), user=User(id=7, name='KUZLMUMTRCGUBDKFBLFSLSHNJ', height=31.6951, weight=22.3766)), ...]
+
+    def test_bulk_update_sets_invalid_set_id(client, generate_sets):
+        sets_to_update = generate_sets[0]
+    
+        sets_data = {
+            "exercise_id": sets_to_update.exercise.id,
+            "workout_id": sets_to_update.workout.id,
+            "user_id": sets_to_update.user.id,
+            "sets": [{"id": 99999, "reps": 10, "weight": 150.0, "duration": 60, "distance": 100.0, "date": str(date.today())}],  # Non-existent set ID
+        }
+    
+        response = client.put("/Set/bulk", json=sets_data)
+>       assert response.status_code == 404
+E       assert 422 == 404
+E        +  where 422 = <Response [422 Unprocessable Entity]>.status_code
+
+tests\test_sets.py:231: AssertionError
+============================== warnings summary ===============================
+..\..\..\Venvs\Kratos\Lib\site-packages\pydantic\_internal\_config.py:291
+  C:\Users\Enis Bukalo\Documents\Venvs\Kratos\Lib\site-packages\pydantic\_internal\_config.py:291: PydanticDeprecatedSince20: Support for class-based `config` is deprecated, use ConfigDict instead. Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.8/migration/
+    warnings.warn(DEPRECATION_MESSAGE, DeprecationWarning)
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ===========================
+FAILED tests/test_sets.py::test_bulk_update_sets_success - assert 422 == 200
+ +  where 422 = <Response [422 Unprocessable Entity]>.status_code
+FAILED tests/test_sets.py::test_bulk_update_sets_invalid_exercise - assert 422 == 404
+ +  where 422 = <Response [422 Unprocessable Entity]>.status_code
+FAILED tests/test_sets.py::test_bulk_update_sets_invalid_set_id - assert 422 == 404
+ +  where 422 = <Response [422 Unprocessable Entity]>.status_code
+================== 3 failed, 30 passed, 1 warning in 11.07s ===================

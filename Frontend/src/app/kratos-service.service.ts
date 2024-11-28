@@ -4,7 +4,7 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { catchError, tap } from 'rxjs/operators';
 
-import { UserQueryParams, SetQueryParams, ExerciseQueryParams, CreateSet, UpdateWorkout, UserMetrics, UserMetricsReply, GetQueryParams } from './kratos-api-types';
+import { UserQueryParams, SetQueryParams, ExerciseQueryParams, CreateSet, UpdateWorkout, UserMetrics, UserMetricsReply, GetQueryParams, BulkUpdateSets } from './kratos-api-types';
 import { User, UserReply, Workout, WorkoutReply, CreateSets, Set, SetReply, Exercise } from './kratos-api-types';
 
 import { KratosErrorHandler } from './kratos-error-handler';
@@ -210,6 +210,15 @@ export class KratosServiceService {
       .delete<SetReply>(`${this.backendEndpoint}${this.setEndpoint}/${id}`, this.httpOptions)
       .pipe(
         tap(_ => console.log(`Set Deleted`)),
+        catchError((error: HttpErrorResponse) => this.kratosErrorHandler.handleError(error)),
+      );
+  }
+
+  updateSets(bulkUpdate: BulkUpdateSets): Observable<SetReply[]> {
+    return this.http
+      .put<SetReply[]>(`${this.backendEndpoint}${this.setEndpoint}/bulk`, bulkUpdate, this.httpOptions)
+      .pipe(
+        tap(_ => console.log(`Sets Bulk Updated`)),
         catchError((error: HttpErrorResponse) => this.kratosErrorHandler.handleError(error)),
       );
   }

@@ -128,5 +128,21 @@ export interface CreateSets {
     user_id: number;
     sets: MultiSets[];
 }
+
+export interface UpdateSet {
+    id: number;
+    reps?: number;
+    weight?: number;
+    duration?: number;
+    distance?: number;
+    date?: string;
+}
+
+export interface BulkUpdateSets {
+    exercise_id: number;
+    workout_id: number;
+    user_id: number;
+    sets: UpdateSet[];
+}
 //#endregion
 

@@ -97,6 +97,49 @@ async def delete_set(id: int = Path(gt=0), db: Session = Depends(get_db)):
     db.commit()
 
 
+@router.put("/bulk", response_model=list[schemas.SetReply])
+async def update_sets(models_to_update: schemas.BulkUpdateSets, db: Session = Depends(get_db)):
+    updated_sets = []
+
+    # Validate exercise exists - do this once for all sets
+    exercise = db.query(models.Exercise).filter(models.Exercise.id == models_to_update.exercise_id).first()
+    if exercise is None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"No Exercise With Id {models_to_update.exercise_id} Exists.")
+
+    # Validate workout exists - do this once for all sets
+    workout = db.query(models.Workout).filter(models.Workout.id == models_to_update.workout_id).first()
+    if workout is None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"No Workout With Id {models_to_update.workout_id} Exists.")
+
+    # Validate user exists - do this once for all sets
+    user = db.query(models.User).filter(models.User.id == models_to_update.user_id).first()
+    if user is None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"No User With Id {models_to_update.user_id} Exists.")
+
+    for set_data in models_to_update.sets:
+        # Get the set to update
+        query = db.query(models.ExerciseSet).filter(models.ExerciseSet.id == set_data.id)
+        set_to_update = query.first()
+
+        # Ensure set exists
+        if set_to_update is None:
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"No Set With Id {set_data.id} Exists.")
+
+        # Combine the set-specific data with the common IDs
+        set_dict = set_data.model_dump()
+        set_dict.update({"exercise_id": models_to_update.exercise_id, "workout_id": models_to_update.workout_id, "user_id": models_to_update.user_id})
+
+        # Update the set
+        query.update(set_dict, synchronize_session=False)
+        updated_sets.append(set_to_update)
+
+    db.commit()
+    for set_model in updated_sets:
+        db.refresh(set_model)
+
+    return updated_sets
+
+
 @router.put("/{id}", response_model=schemas.ExerciseSet)
 async def update_set(model_to_update: schemas.CreateSet, id: int = Path(gt=0), db: Session = Depends(get_db)):
     exercise = db.query(models.Exercise).filter(models.Exercise.id == model_to_update.exercise_id).first()

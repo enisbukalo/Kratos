@@ -164,3 +164,59 @@ def test_create_sets_empty_sets_list(client, generate_exercises, generate_workou
     response = client.post("/Set/bulk", json=sets_data)
     assert response.status_code == 200
     assert response.json() == []
+
+
+def test_bulk_update_sets(client, generate_users, generate_workouts, generate_exercises):
+    # Get random test data
+    exercise = random.choice(generate_exercises)
+    workout = random.choice(generate_workouts)
+    user = random.choice(generate_users)
+
+    # First create some sets
+    create_sets_data = {
+        "exercise_id": exercise.id,
+        "workout_id": workout.id,
+        "user_id": user.id,
+        "sets": [
+            {"reps": 5, "weight": 100.0, "duration": 0, "distance": 0.0, "date": str(date.today())},
+            {"reps": 5, "weight": 102.5, "duration": 0, "distance": 0.0, "date": str(date.today())},
+        ],
+    }
+
+    response = client.post("/Set/bulk", json=create_sets_data)
+    assert response.status_code == 200
+    created_sets = [schemas.SetReply(**s) for s in response.json()]
+    assert len(created_sets) == 2
+
+    # Now prepare update data for these sets
+    update_sets_data = {
+        "exercise_id": exercise.id,
+        "workout_id": workout.id,
+        "user_id": user.id,
+        "sets": [
+            {"id": created_sets[0].id, "reps": 8, "weight": 110.0, "duration": 60, "distance": 0.0, "date": str(date.today())},
+            {"id": created_sets[1].id, "reps": 10, "weight": 115.0, "duration": 45, "distance": 0.0, "date": str(date.today())},
+        ],
+    }
+
+    # Update the sets
+    response = client.put("/Set/bulk", json=update_sets_data)
+    assert response.status_code == 200
+    updated_sets = response.json()
+    assert len(updated_sets) == 2
+
+    # Verify first set
+    assert updated_sets[0]["reps"] == 8
+    assert updated_sets[0]["weight"] == 110.0
+    assert updated_sets[0]["duration"] == 60
+    assert updated_sets[0]["exercise"]["id"] == exercise.id
+    assert updated_sets[0]["workout"]["id"] == workout.id
+    assert updated_sets[0]["user"]["id"] == user.id
+
+    # Verify second set
+    assert updated_sets[1]["reps"] == 10
+    assert updated_sets[1]["weight"] == 115.0
+    assert updated_sets[1]["duration"] == 45
+    assert updated_sets[1]["exercise"]["id"] == exercise.id
+    assert updated_sets[1]["workout"]["id"] == workout.id
+    assert updated_sets[1]["user"]["id"] == user.id
