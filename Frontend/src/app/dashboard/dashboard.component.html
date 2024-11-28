@@ -7,7 +7,7 @@
         </button>
         <div class="user-info">
             <div class="user-name" *ngIf="!isEditingName" (click)="startEditingName()">
-                {{currentUser?.name}}
+                {{currentUser.name}}
             </div>
             <div class="user-name-edit" *ngIf="isEditingName">
                 <mat-form-field appearance="outline" class="name-input">
