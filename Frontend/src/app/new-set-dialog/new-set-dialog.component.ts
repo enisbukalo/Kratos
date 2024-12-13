@@ -10,7 +10,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatIconModule } from '@angular/material/icon';
-import { CookieService } from 'ngx-cookie-service';
+import { UserStateService } from '../services/user-state.service';
 import { CreateExerciseDialogComponent } from '../create-exercise-dialog/create-exercise-dialog.component';
 import { MatDialog } from '@angular/material/dialog';
 
@@ -38,17 +38,15 @@ export class NewSetDialogComponent {
   exercises: Exercise[] = [];
   selectedExercise?: Exercise;
   sets: CreateSet[] = [this.createEmptySet()];
-  currentUser: any;
 
   constructor(
     private dialogRef: MatDialogRef<NewSetDialogComponent>,
     private dialog: MatDialog,
     private apiService: KratosServiceService,
-    private cookieService: CookieService,
+    private userState: UserStateService,
     @Inject(MAT_DIALOG_DATA) public data: { workoutId: number }
   ) {
     this.loadExercises();
-    this.currentUser = JSON.parse(this.cookieService.get('currentUser'));
   }
 
   /**
@@ -104,12 +102,12 @@ export class NewSetDialogComponent {
   onSubmit() {
     if (this.selectedExercise?.id) {
       const today = new Date().toISOString().split('T')[0];
+      const userId = this.userState.getCurrentUserId();
 
-      // Create the CreateSets object with the required properties
       const createSetsPayload: CreateSets = {
         exercise_id: this.selectedExercise.id,
         workout_id: this.data.workoutId,
-        user_id: this.currentUser.id,
+        user_id: userId,
         sets: this.sets.map(set => ({
           reps: set.reps ?? 0,
           weight: set.weight ?? 0,
@@ -119,7 +117,6 @@ export class NewSetDialogComponent {
         }))
       };
 
-      // Use a single API call to create all sets
       this.apiService.createSets(createSetsPayload).subscribe({
         next: (response) => {
           this.dialogRef.close(response);
