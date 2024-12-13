@@ -7,6 +7,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { KratosServiceService } from '../kratos-service.service';
 import { Exercise } from '../kratos-api-types';
+import { UserStateService } from '../services/user-state.service';
 
 @Component({
   selector: 'app-create-exercise-dialog',
@@ -23,14 +24,20 @@ import { Exercise } from '../kratos-api-types';
   styleUrl: './create-exercise-dialog.component.scss'
 })
 export class CreateExerciseDialogComponent {
-  exercise: { name: string; description: string } = { name: '', description: '' };
+  exercise: { name: string; description: string; user_id?: number } = {
+    name: '',
+    description: ''
+  };
 
   constructor(
     private dialogRef: MatDialogRef<CreateExerciseDialogComponent>,
-    private apiService: KratosServiceService
+    private apiService: KratosServiceService,
+    private userState: UserStateService
   ) { }
 
   onSubmit() {
+    this.exercise.user_id = this.userState.getCurrentUserId();
+
     this.apiService.createExercise(this.exercise).subscribe({
       next: (newExercise: Exercise) => {
         this.dialogRef.close(newExercise);
