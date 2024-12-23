@@ -11,13 +11,15 @@ import { CommonModule } from '@angular/common';
 import { CardModule } from 'primeng/card';
 import { MaterialModule } from '../material.module';
 import { SidebarComponent } from '../sidebar/sidebar.component';
-import { MatDialog } from '@angular/material/dialog';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { NewWorkoutDialogComponent } from '../new-workout-dialog/new-workout-dialog.component';
 import { UserStateService } from '../services/user-state.service';
 import { NewMetricDialogComponent } from '../new-metric-dialog/new-metric-dialog.component';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { FormsModule } from '@angular/forms';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { ConfirmDialogComponent } from '../confirm-dialog/confirm-dialog.component';
 
 /**
  * Main dashboard component that displays workout summaries and statistics.
@@ -37,7 +39,9 @@ import { FormsModule } from '@angular/forms';
     SidebarComponent,
     MatFormFieldModule,
     MatInputModule,
-    FormsModule
+    FormsModule,
+    MatDialogModule,
+    ConfirmDialogComponent
   ],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.scss',
@@ -46,6 +50,7 @@ export class DashboardComponent {
   cookieService = inject(CookieService);
   router = inject(Router);
   dialog = inject(MatDialog);
+  snackBar = inject(MatSnackBar);
 
   currentUser!: UserReply;
   currentUsersWorkouts?: WorkoutReply[] = [];
@@ -247,5 +252,42 @@ export class DashboardComponent {
   cancelEditName(): void {
     this.isEditingName = false;
     this.editableName = this.currentUser?.name ?? '';
+  }
+
+  confirmDeleteWorkout(workout: WorkoutReply): void {
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      width: '300px',
+      data: {
+        title: 'Delete Workout',
+        message: `Are you sure you want to delete "${workout.name}"?`
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result === true) {
+        this.deleteWorkout(workout);
+      }
+    });
+  }
+
+  private deleteWorkout(workout: WorkoutReply): void {
+    if (workout.id) {
+      this.apiService.deleteWorkout(workout.id).subscribe({
+        next: () => {
+          this.currentUsersWorkouts = this.currentUsersWorkouts?.filter(w => w.id !== workout.id);
+          this.snackBar.open('Workout deleted successfully', 'Close', {
+            duration: 3000,
+            panelClass: ['success-snackbar']
+          });
+        },
+        error: (error) => {
+          console.error('Error deleting workout:', error);
+          this.snackBar.open('Failed to delete workout', 'Close', {
+            duration: 3000,
+            panelClass: ['error-snackbar']
+          });
+        }
+      });
+    }
   }
 }

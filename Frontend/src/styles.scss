@@ -25,3 +25,17 @@ body {
 .mat-drawer {
     --mat-sidenav-container-background-color: #13111C;
 }
+
+.success-snackbar {
+  background: #4caf50;
+  color: #4caf50;
+}
+
+.error-snackbar {
+  background: #f44336;
+  color: white;
+}
+
+.mat-mdc-snack-bar-action {
+  color: #810081;
+}

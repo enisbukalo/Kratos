@@ -13,6 +13,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { UserStateService } from '../services/user-state.service';
 import { CreateExerciseDialogComponent } from '../create-exercise-dialog/create-exercise-dialog.component';
 import { MatDialog } from '@angular/material/dialog';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 /**
  * Dialog component for adding new sets to a workout.
@@ -44,7 +45,8 @@ export class NewSetDialogComponent {
     private dialog: MatDialog,
     private apiService: KratosServiceService,
     private userState: UserStateService,
-    @Inject(MAT_DIALOG_DATA) public data: { workoutId: number }
+    @Inject(MAT_DIALOG_DATA) public data: { workoutId: number },
+    private snackBar: MatSnackBar
   ) {
     this.loadExercises();
   }
@@ -119,10 +121,18 @@ export class NewSetDialogComponent {
 
       this.apiService.createSets(createSetsPayload).subscribe({
         next: (response) => {
+          this.snackBar.open('Sets created successfully!', 'Close', {
+            duration: 3000,
+            panelClass: ['success-snackbar']
+          });
           this.dialogRef.close(response);
         },
         error: (error) => {
           console.error('Error creating sets:', error);
+          this.snackBar.open('Failed to create sets', 'Close', {
+            duration: 3000,
+            panelClass: ['error-snackbar']
+          });
         }
       });
     }

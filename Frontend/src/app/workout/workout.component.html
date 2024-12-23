@@ -1,4 +1,5 @@
-<app-sidebar #sidebar [isOpen]="sidebarVisible" (dashboardClick)="goToDashboard()" (loginClick)=" goToLogin()">
+<app-sidebar #sidebar [isOpen]="sidebarVisible" (dashboardClick)="goToDashboard()" (profileClick)="goToLogin()"
+    (loginClick)="goToLogin()">
 
     <mat-toolbar class="modern-toolbar">
         <button mat-icon-button (click)="sidebar.toggle()">
@@ -7,13 +8,51 @@
         <button mat-icon-button (click)="goBack()">
             <mat-icon>arrow_back</mat-icon>
         </button>
-        <h1>{{workout?.name}}</h1>
+        <div class="workout-title">
+            <div class="workout-name" *ngIf="!isEditingName" (click)="startEditingName()">
+                {{workout?.name}}
+            </div>
+            <div class="workout-name-edit" *ngIf="isEditingName">
+                <mat-form-field appearance="outline" class="name-input">
+                    <input matInput
+                           [(ngModel)]="editableName"
+                           (keyup.enter)="saveName()"
+                           (keyup.escape)="cancelEditName()"
+                           id="workoutNameInput">
+                </mat-form-field>
+                <button mat-icon-button color="primary" (click)="saveName()">
+                    <mat-icon>check</mat-icon>
+                </button>
+                <button mat-icon-button color="warn" (click)="cancelEditName()">
+                    <mat-icon>close</mat-icon>
+                </button>
+            </div>
+        </div>
     </mat-toolbar>
 
     <div class="workout-content">
-        <mat-card appearance="outlined">
+        <mat-card appearance="outlined" class="workout-card">
             <mat-card-header>
-                <mat-card-title><strong>Exercises</strong></mat-card-title>
+                <mat-card-title>
+                    <div class="workout-name" *ngIf="!isEditingName" (click)="startEditingName()">
+                        {{workout?.name}}
+                    </div>
+                    <div class="workout-name-edit" *ngIf="isEditingName">
+                        <mat-form-field appearance="outline" class="name-input">
+                            <input matInput
+                                   [(ngModel)]="editableName"
+                                   (keyup.enter)="saveName()"
+                                   (keyup.escape)="cancelEditName()"
+                                   id="workoutNameInput">
+                        </mat-form-field>
+                        <button mat-icon-button color="primary" (click)="saveName()">
+                            <mat-icon>check</mat-icon>
+                        </button>
+                        <button mat-icon-button color="warn" (click)="cancelEditName()">
+                            <mat-icon>close</mat-icon>
+                        </button>
+                    </div>
+                </mat-card-title>
             </mat-card-header>
             <mat-card-content>
                 <mat-accordion>
@@ -116,9 +155,4 @@
             </mat-card-actions>
         </mat-card>
     </div>
-
-    <app-confirm-dialog [visible]="showDeleteDialog" header="Delete Exercise"
-        [message]="'Are you sure you want to delete ' + (exerciseToDelete || 'this exercise') + '?'"
-        (confirm)="confirmDeleteExercise()" (reject)="showDeleteDialog = false" (hide)="showDeleteDialog = false">
-    </app-confirm-dialog>
 </app-sidebar>

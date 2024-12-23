@@ -17,6 +17,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { forkJoin } from 'rxjs';
 import { ConfirmDialogComponent } from '../confirm-dialog/confirm-dialog.component';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 interface GroupedSets {
   [exerciseName: string]: Set[];
@@ -37,6 +38,7 @@ interface EditableSet extends Set {
   standalone: true,
   imports: [
     CommonModule,
+    FormsModule,
     MaterialModule,
     SidebarComponent,
     MatDialogModule,
@@ -60,13 +62,16 @@ export class WorkoutComponent implements OnInit {
   workoutSets: EditableSet[] = [];
   showDeleteDialog = false;
   exerciseToDelete?: string;
+  isEditingName: boolean = false;
+  editableName: string = '';
 
   constructor(
     private route: ActivatedRoute,
     private router: Router,
     private apiService: KratosServiceService,
     private dialog: MatDialog,
-    private userState: UserStateService
+    private userState: UserStateService,
+    private snackBar: MatSnackBar
   ) { }
 
   /**
@@ -284,9 +289,17 @@ export class WorkoutComponent implements OnInit {
           }
         }));
         this.groupedSets = this.groupSetsByExercise(this.sets);
+        this.snackBar.open('Workout saved successfully!', 'Close', {
+          duration: 3000,
+          panelClass: ['success-snackbar']
+        });
       },
       error: (error) => {
         console.error('Error updating sets:', error);
+        this.snackBar.open('Failed to save workout', 'Close', {
+          duration: 3000,
+          panelClass: ['error-snackbar']
+        });
       }
     });
   }
@@ -296,6 +309,10 @@ export class WorkoutComponent implements OnInit {
    */
   endWorkout(): void {
     this.saveWorkout();
+    this.snackBar.open('Workout ended successfully!', 'Close', {
+      duration: 3000,
+      panelClass: ['success-snackbar']
+    });
     this.router.navigate(['/dashboard']);
   }
 
@@ -370,8 +387,20 @@ export class WorkoutComponent implements OnInit {
    * @param exerciseName Name of the exercise to delete
    */
   deleteExercise(exerciseName: string): void {
-    this.exerciseToDelete = exerciseName;
-    this.showDeleteDialog = true;
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      width: '300px',
+      data: {
+        title: 'Delete Exercise',
+        message: `Are you sure you want to delete "${exerciseName}" and all its sets?`
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result === true) {
+        this.exerciseToDelete = exerciseName;
+        this.confirmDeleteExercise();
+      }
+    });
   }
 
   /**
@@ -417,5 +446,49 @@ export class WorkoutComponent implements OnInit {
         }
       });
     }
+  }
+
+  startEditingName() {
+    this.isEditingName = true;
+    this.editableName = this.workout?.name || '';
+    setTimeout(() => {
+      const nameInput = document.getElementById('workoutNameInput') as HTMLInputElement;
+      if (nameInput) {
+        nameInput.focus();
+      }
+    });
+  }
+
+  saveName() {
+    if (this.workout?.id && this.editableName.trim()) {
+      const updateWorkout = {
+        name: this.editableName.trim()
+      };
+
+      this.apiService.updateWorkout(this.workout.id, updateWorkout).subscribe({
+        next: (updatedWorkout) => {
+          if (this.workout) {
+            this.workout.name = this.editableName.trim();
+          }
+          this.isEditingName = false;
+          this.snackBar.open('Workout name updated successfully!', 'Close', {
+            duration: 3000,
+            panelClass: ['success-snackbar']
+          });
+        },
+        error: (error) => {
+          console.error('Error updating workout name:', error);
+          this.snackBar.open('Failed to update workout name', 'Close', {
+            duration: 3000,
+            panelClass: ['error-snackbar']
+          });
+        }
+      });
+    }
+  }
+
+  cancelEditName() {
+    this.isEditingName = false;
+    this.editableName = this.workout?.name || '';
   }
 }
