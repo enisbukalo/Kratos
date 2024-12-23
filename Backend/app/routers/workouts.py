@@ -72,13 +72,7 @@ async def update_workout(model_to_update: schemas.UpdateWorkout, id: int = Path(
         raise HTTPException(status.HTTP_404_NOT_FOUND, detail=f"No Workout With Id {id} Exists.")
 
     # Exclude any unset fields from the update data.
-    update_data = model_to_update.model_dump(exclude_unset=True)
-
-    # Ensure that the started_at field is not null.
-    if "started_at" in update_data and update_data["started_at"] is None:
-        raise HTTPException(status_code=400, detail="started_at cannot be null")
-
-    query.update(update_data, synchronize_session=False)
+    workout_to_update.name = model_to_update.name
     db.commit()
     db.refresh(workout_to_update)
 
