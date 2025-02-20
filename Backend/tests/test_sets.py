@@ -220,3 +220,59 @@ def test_bulk_update_sets(client, generate_users, generate_workouts, generate_ex
     assert updated_sets[1]["exercise"]["id"] == exercise.id
     assert updated_sets[1]["workout"]["id"] == workout.id
     assert updated_sets[1]["user"]["id"] == user.id
+
+
+def test_delete_empty_sets(client: TestClient, generate_sets: list[schemas.SetReply]):
+    # Create some empty sets
+    exercise = generate_sets[0].exercise
+    workout = generate_sets[0].workout
+    user = generate_sets[0].user
+
+    empty_sets_data = {
+        "exercise_id": exercise.id,
+        "workout_id": workout.id,
+        "user_id": user.id,
+        "sets": [
+            {"reps": 0, "weight": 0, "duration": 0, "distance": 0, "date": str(date.today())},
+            {"reps": 0, "weight": 0, "duration": 0, "distance": 0, "date": str(date.today())},
+        ],
+    }
+
+    # Create non-empty set
+    non_empty_set_data = {
+        "exercise_id": exercise.id,
+        "workout_id": workout.id,
+        "user_id": user.id,
+        "sets": [
+            {"reps": 5, "weight": 100, "duration": 60, "distance": 0, "date": str(date.today())},
+        ],
+    }
+
+    # Add the sets to the database
+    response = client.post("/Set/bulk", json=empty_sets_data)
+    assert response.status_code == 200
+    empty_sets = response.json()
+    assert len(empty_sets) == 2
+
+    response = client.post("/Set/bulk", json=non_empty_set_data)
+    assert response.status_code == 200
+    non_empty_sets = response.json()
+    assert len(non_empty_sets) == 1
+
+    # Delete empty sets
+    response = client.delete("/Set/empty")
+    assert response.status_code == 200
+    result = response.json()
+    assert result["deleted_count"] == 2
+    assert "Successfully deleted 2 empty sets" in result["message"]
+
+    # Verify empty sets were deleted but non-empty set remains
+    response = client.get(f"/Set?page_size=100&page_number=1")
+    remaining_sets = response.json()
+
+    # Should only have the non-empty set and any sets from generate_sets
+    assert len(remaining_sets) == len(generate_sets) + 1
+
+    # Verify the remaining set has non-zero values
+    for set in remaining_sets:
+        assert not (set["reps"] == 0 and set["weight"] == 0 and set["duration"] == 0 and set["distance"] == 0)
