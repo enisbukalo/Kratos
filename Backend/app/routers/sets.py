@@ -18,6 +18,24 @@ async def get_sets(query_params: Annotated[schemas.SetQuery, Depends(schemas.Set
     return query.limit(query_params.page_size).offset((query_params.page_number * query_params.page_size) if query_params.page_number > 1 else 0).all()
 
 
+@router.delete("/empty", response_model=schemas.DeleteEmptySetsResponse)
+async def delete_empty_sets(db: Session = Depends(get_db)):
+    """Delete all sets that have empty/zero values for all metrics (reps, weight, duration, and distance)"""
+    # Delete sets where all metrics are empty/zero
+    query = db.query(models.ExerciseSet).filter(
+        models.ExerciseSet.reps == 0, models.ExerciseSet.weight == 0, models.ExerciseSet.duration == 0, models.ExerciseSet.distance == 0
+    )
+
+    # Get the count of sets to be deleted
+    sets_to_delete = query.count()
+
+    # Delete the sets
+    query.delete(synchronize_session=False)
+    db.commit()
+
+    return schemas.DeleteEmptySetsResponse(message=f"Successfully deleted {sets_to_delete} empty sets", deleted_count=sets_to_delete)
+
+
 @router.get("/{id}", response_model=schemas.SetReply)
 async def get_set(id: int = Path(gt=0), db: Session = Depends(get_db)):
     retrieved_set = db.query(models.ExerciseSet).filter(models.ExerciseSet.id == id).first()

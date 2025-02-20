@@ -81,6 +81,11 @@ class SetQuery(GetQueryParams):
     pass
 
 
+class DeleteEmptySetsResponse(BaseModel):
+    message: str
+    deleted_count: int
+
+
 from .workouts import Workout
 from .users import User
 from .exercises import Exercise
